@@ -38,4 +38,16 @@ class SecurityController extends AppController {
         $url = "http://$_SERVER[HTTP_HOST]";
         header("Location: {$url}/dashboard");
     }
+    public function logout() {
+        session_start();
+
+        // Czyścimy wszystkie zmienne sesyjne i niszczymy sesję
+        session_unset();
+        session_destroy();
+
+
+        $url = "http://$_SERVER[HTTP_HOST]";
+        header("Location: {$url}/login");
+        exit();
+    }
 }

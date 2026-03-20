@@ -28,7 +28,7 @@ class Routing {
         $controllerName = self::$routes[$url];
 
 
-        if ($controllerName === 'login') {
+        if ($controllerName === 'login' || $controllerName === 'logout') {
             require_once 'src/controllers/SecurityController.php';
             $object = new SecurityController();
         } else {

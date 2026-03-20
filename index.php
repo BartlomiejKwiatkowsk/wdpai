@@ -8,5 +8,6 @@ $path = parse_url($path, PHP_URL_PATH);
 Routing::get('login', 'login');
 Routing::get('dashboard', 'dashboard');
 Routing::get('', 'login');
+Routing::get('logout', 'logout');
 
 Routing::run($path);

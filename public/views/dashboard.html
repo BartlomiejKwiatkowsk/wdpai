@@ -6,5 +6,10 @@
 </head>
 <body>
     <h1>Dashboard</h1>
+    <!--  guzik do testów -->
+    <div style="padding: 20px; background: #222; color: white; display: flex; justify-content: space-between;">
+        <span>Zalogowany jako: <?php echo $userEmail ?? 'Nieznany'; ?> (Rola: <?php echo $userRole ?? 'Brak'; ?>)</span>
+        <a href="/logout" style="color: red; text-decoration: none; font-weight: bold;">WYLOGUJ</a>
+    </div>
 </body>
 </html>
