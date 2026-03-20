@@ -7,10 +7,10 @@ class Database {
     private $database;
 
     public function __construct() {
-        $this->username = 'postgres';
-        $this->password = 'postgres';
+        $this->username = 'docker';
+        $this->password = 'docker';
+        $this->database = 'db';
         $this->host = 'db';
-        $this->database = 'postgres';
     }
 
     public function connect() {

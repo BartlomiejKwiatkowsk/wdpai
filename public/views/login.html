@@ -1,10 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <h1>Login</h1>
-</body>
-</html>
+<form class="login-form" action="/login" method="POST">
+
+    <div class="messages">
+        <?php
+            if(isset($messages)){
+                foreach($messages as $message) {
+                    echo $message;
+                }
+            }
+        ?>
+    </div>
+
+    <div class="input-group">
+        <label>Email Address</label>
+        <input name="email" type="email" placeholder="name@company.com" required>
+    </div>
+
+    <div class="input-group">
+        <label>Password</label>
+        <input name="password" type="password" placeholder="********" required>
+    </div>
+
+    <button type="submit">Sign In</button>
+</form>

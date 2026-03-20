@@ -28,7 +28,13 @@ class Routing {
         $controllerName = self::$routes[$url];
 
 
-        $object = new DefaultController();
+        if ($controllerName === 'login') {
+            require_once 'src/controllers/SecurityController.php';
+            $object = new SecurityController();
+        } else {
+            require_once 'src/controllers/DefaultController.php';
+            $object = new DefaultController();
+        }
 
         if(method_exists($object, $controllerName)){
             $object->$controllerName();
