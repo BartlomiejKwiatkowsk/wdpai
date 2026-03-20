@@ -11,5 +11,25 @@
         <span>Zalogowany jako: <?php echo $userEmail ?? 'Nieznany'; ?> (Rola: <?php echo $userRole ?? 'Brak'; ?>)</span>
         <a href="/logout" style="color: red; text-decoration: none; font-weight: bold;">WYLOGUJ</a>
     </div>
+    <!-- Sekcja wyświetlania akwariów -->
+    <div class="tanks-container" style="display: flex; gap: 20px; flex-wrap: wrap; padding: 20px;">
+
+        <?php if(isset($tanks) && count($tanks) > 0): ?>
+        <?php foreach ($tanks as $tank): ?>
+        <div class="tank-card" style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; width: 300px;">
+            <h3 style="margin-top: 0;"><?= htmlspecialchars($tank->getName()); ?></h3>
+            <p><strong>Typ:</strong> <?= htmlspecialchars($tank->getWaterType()); ?></p>
+            <p><strong>Pojemność:</strong> <?= htmlspecialchars($tank->getVolume()); ?> Litrów</p>
+            <p><strong>Status:</strong> <?= htmlspecialchars($tank->getStatus()); ?></p>
+            <p><strong>Ilość obsady:</strong> <?= htmlspecialchars($tank->getLivestockCount()); ?></p>
+
+            <a href="/tank_details?id=<?= $tank->getId(); ?>" style="display: inline-block; margin-top: 10px; padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">Zarządzaj -></a>
+        </div>
+        <?php endforeach; ?>
+        <?php else: ?>
+        <p>Brak przypisanych zbiorników. Kliknij "Add New Tank", aby rozpocząć.</p>
+        <?php endif; ?>
+
+    </div>
 </body>
 </html>
