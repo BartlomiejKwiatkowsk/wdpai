@@ -1,18 +1,39 @@
 <?php
 
+require_once 'src/controllers/DefaultController.php';
+
 class Routing {
-    public static function run($path) {
-        switch ($path) {
-            case "dashboard": 
-                include("public/views/dashboard.html");
-                break;
-            case "login":
-                include("public/views/login.html");
-                break;
-            default:
-                // include("public/views/404.html");
-                echo "404";
-                break;
+    public static $routes;
+
+    public static function get($url, $view) {
+        self::$routes[$url] = $view;
+    }
+
+    public static function run($url) {
+        if ($url === '') {
+            $url = '';
+        }
+
+        if (!array_key_exists($url, self::$routes)) {
+            // Wymóg obsługi błędów globalnie
+            $templatePath = 'public/views/404.html';
+            if(file_exists($templatePath)){
+                include($templatePath);
+            } else {
+                echo "Strona nie istnieje! (404)";
+            }
+            return;
+        }
+
+        $controllerName = self::$routes[$url];
+
+
+        $object = new DefaultController();
+
+        if(method_exists($object, $controllerName)){
+            $object->$controllerName();
+        } else {
+            echo "Akcja $controllerName nie została zaimplementowana w kontrolerze DefaultController!";
         }
     }
 }
