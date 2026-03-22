@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add New Tank - AquaManager</title>
+</head>
+<body style="font-family: sans-serif; background: #f4f4f9; padding: 20px;">
+
+<div style="max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px;">
+  <h2>Add New Aquarium</h2>
+
+  <div class="messages" style="color: red; margin-bottom: 15px;">
+    <?php
+                if(isset($messages)){
+                    foreach($messages as $message) {
+                        echo $message;
+                    }
+                }
+            ?>
+  </div>
+
+  <form action="/addTank" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+
+    <div>
+      <label>Tank Name</label><br>
+      <input type="text" name="name" placeholder="e.g. Living Room Reef" required style="width: 100%; padding: 8px;">
+    </div>
+
+    <div>
+      <label>Ecosystem Type</label><br>
+      <select name="water_type" required style="width: 100%; padding: 8px;">
+        <option value="Freshwater">Freshwater</option>
+        <option value="Saltwater">Saltwater</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Capacity (Liters)</label><br>
+      <input type="number" name="volume_liters" placeholder="e.g. 150" min="1" required style="width: 100%; padding: 8px;">
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <a href="/dashboard" style="padding: 10px; background: #ccc; text-decoration: none; color: black; border-radius: 4px;">Cancel</a>
+      <button type="submit" style="padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Save Tank</button>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>

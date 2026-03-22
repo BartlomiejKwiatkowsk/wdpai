@@ -17,7 +17,7 @@ class Tank {
         $this->livestockCount = $livestockCount;
     }
 
-    // Gettery do wyświetlania w widoku (enkapsulacja - wymóg obiektowości)
+    // Gettery do wyświetlania w widoku
     public function getId() { return $this->id; }
     public function getName() { return $this->name; }
     public function getWaterType() { return $this->waterType; }
