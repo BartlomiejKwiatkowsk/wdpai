@@ -1,25 +1,38 @@
-<link rel="stylesheet" type="text/css" href="public/css/style.css">
-<form class="login-form" action="/login" method="POST">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="public/css/style.css">
+    <title>AquaManager - Login</title>
+</head>
+<body>
+<div class="login-container">
+    <img src="public/img/logo.png" alt="AquaLogo" class="logo-icon">
+    <h1>AquaManager</h1>
 
     <div class="messages">
-        <?php
-            if(isset($messages)){
-                foreach($messages as $message) {
-                    echo $message;
-                }
-            }
-        ?>
+        <?php if(isset($messages)){
+                foreach($messages as $message) { echo $message; }
+            } ?>
     </div>
 
-    <div class="input-group">
-        <label>Email Address</label>
-        <input name="email" type="email" placeholder="name@company.com" required>
-    </div>
+    <form action="login" method="POST">
+        <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="email@example.com" required>
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+        </div>
 
-    <div class="input-group">
-        <label>Password</label>
-        <input name="password" type="password" placeholder="********" required>
-    </div>
+        <button type="submit" class="login-btn">Login</button>
+    </form>
 
-    <button type="submit">Sign In</button>
-</form>
+    <div class="footer-links">
+        <a href="#">Forgot Password?</a>
+        <a href="#">Request Access</a>
+    </div>
+</div>
+</body>
+</html>
