@@ -44,6 +44,47 @@ body {
     padding: 40px;
 }
 
+/* Sidebar Navigation */
+.logo-container {
+    margin-bottom: 40px;
+    padding: 0 10px;
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 1px;
+}
+
+.nav-menu {
+    list-style: none;
+}
+
+.nav-item {
+    margin-bottom: 10px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: rgba(0, 168, 255, 0.1);
+    color: var(--accent);
+}
+
+.nav-link.logout {
+    margin-top: auto;
+    color: #ff5252;
+}
+
 /* Tank Cards */
 .tanks-container {
     display: grid;
