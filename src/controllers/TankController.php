@@ -9,22 +9,19 @@ class TankController extends AppController {
     public function addTank() {
         session_start();
 
-        // Weryfikacja sesji
         if (!isset($_SESSION['user_email'])) {
             $url = "http://$_SERVER[HTTP_HOST]";
             header("Location: {$url}/login");
             exit();
         }
 
-        // Obsługa wysłania formularza
         if ($this->isPost()) {
-            // Tworzenie obiektu na podstawie danych z POST
             $tank = new Tank(
                 null,
                 $_POST['name'],
                 $_POST['water_type'],
                 (int)$_POST['volume_liters'],
-                'Empty' // Domyślny status dla nowego zbiornika
+                'Empty'
             );
 
             $tankRepository = new TankRepository();
@@ -39,7 +36,24 @@ class TankController extends AppController {
             }
         }
 
-        // Zwykłe wejście na stronę (GET) renderuje czysty formularz
         $this->render('add-tank');
+    }
+
+    // Nowa metoda obsługująca widok zarządzania akwarium
+    public function tankDetails() {
+        session_start();
+
+        if (!isset($_SESSION['user_email'])) {
+            $url = "http://$_SERVER[HTTP_HOST]";
+            header("Location: {$url}/login");
+            exit();
+        }
+
+        // Pobieranie ID z paska adresu (przygotowanie pod logikę wyciągania danych z bazy)
+        $tankId = $_GET['id'] ?? null;
+
+        // Na ten moment renderujemy czysty widok.
+        // W przyszłości pobierzemy tu dane konkretnego akwarium przez TankRepository
+        $this->render('tank-details');
     }
 }

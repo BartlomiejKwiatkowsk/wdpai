@@ -2,50 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/public/css/app.css">
   <title>Add New Tank - AquaManager</title>
-  <link rel="stylesheet" type="text/css" href="public/css/style.css">
 </head>
-<body style="font-family: sans-serif; background: #f4f4f9; padding: 20px;">
+<body class="app-view">
 
-<div style="max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px;">
-  <h2>Add New Aquarium</h2>
+<nav class="sidebar">
+  <div class="brand">
+    <img src="/public/img/logo.png" alt="Logo">
+    <span>AquaManager</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="/dashboard">My Tanks</a></li>
+    <li><a href="/catalog">Species Catalog</a></li>
+    <li><a href="/addTank" class="active" style="background: #eef7ff; color: var(--primary);">+ Add New Tank</a></li>
+  </ul>
+  <a href="/logout" class="logout-btn">Logout</a>
+</nav>
 
-  <div class="messages" style="color: red; margin-bottom: 15px;">
-    <?php
-                if(isset($messages)){
-                    foreach($messages as $message) {
-                        echo $message;
-                    }
-                }
-            ?>
+<main class="main-content">
+  <header class="topbar">
+    <h2 class="page-title">Add New Aquarium</h2>
+    <div class="user-profile">
+      <span><?php echo $userEmail ?? 'Alex Morgan'; ?></span>
+    </div>
+  </header>
+
+  <div class="breadcrumb">Tanks > <span>Add New</span></div>
+
+  <div style="margin-bottom: 30px;">
+    <h1 style="font-size: 28px;">Add New Aquarium</h1>
+    <p style="color: var(--text-muted);">Enter the specifications and details for your new tank setup.</p>
   </div>
 
-  <form action="/addTank" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+  <div class="messages">
+    <?php if(isset($messages)){ foreach($messages as $message) { echo "<p style='color: var(--danger); margin-bottom: 15px;'>$message</p>"; } } ?>
+  </div>
 
-    <div>
-      <label>Tank Name</label><br>
-      <input type="text" name="name" placeholder="e.g. Living Room Reef" required style="width: 100%; padding: 8px;">
-    </div>
+  <div class="form-card">
+    <form action="/addTank" method="POST">
 
-    <div>
-      <label>Ecosystem Type</label><br>
-      <select name="water_type" required style="width: 100%; padding: 8px;">
-        <option value="Freshwater">Freshwater</option>
-        <option value="Saltwater">Saltwater</option>
-      </select>
-    </div>
+      <h3 class="section-title">General Information</h3>
+      <p class="section-desc">Basic identification for your aquarium.</p>
 
-    <div>
-      <label>Capacity (Liters)</label><br>
-      <input type="number" name="volume_liters" placeholder="e.g. 150" min="1" required style="width: 100%; padding: 8px;">
-    </div>
+      <div class="form-group">
+        <label class="form-label">Tank Name</label>
+        <input type="text" name="name" class="form-control" placeholder="e.g., Living Room Reef" required>
+      </div>
 
-    <div style="display: flex; gap: 10px; margin-top: 10px;">
-      <a href="/dashboard" style="padding: 10px; background: #ccc; text-decoration: none; color: black; border-radius: 4px;">Cancel</a>
-      <button type="submit" style="padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Save Tank</button>
-    </div>
-  </form>
-</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Tank Type</label>
+          <select name="water_type" class="form-control" required>
+            <option value="" disabled selected>Select type</option>
+            <option value="Freshwater">Freshwater</option>
+            <option value="Saltwater">Saltwater</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Installation Date</label>
+          <input type="date" name="install_date" class="form-control">
+        </div>
+      </div>
+
+      <h3 class="section-title" style="margin-top: 20px;">Specifications</h3>
+      <p class="section-desc">Physical measurements of the tank.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Volume (Liters)</label>
+          <input type="number" name="volume_liters" class="form-control" placeholder="0" min="1" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dimensions (WxDxH cm)</label>
+          <div class="dimensions-grid">
+            <input type="number" name="dim_w" class="form-control" placeholder="W">
+            <input type="number" name="dim_d" class="form-control" placeholder="D">
+            <input type="number" name="dim_h" class="form-control" placeholder="H">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea name="notes" class="form-control" placeholder="Additional details about equipment, substrate, etc."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <a href="/dashboard" class="btn-cancel">Cancel</a>
+        <button type="submit" class="btn-submit">✓ Save Tank</button>
+      </div>
+
+    </form>
+  </div>
+</main>
 
 </body>
 </html>
