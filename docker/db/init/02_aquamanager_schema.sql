@@ -131,3 +131,27 @@ VALUES
     ('Neon Tetra', 'Paracheirodon innesi', 'Freshwater', 6.0, 7.0, 21.0, 27.0),
     ('Ocellaris Clownfish', 'Amphiprion ocellaris', 'Saltwater', 8.0, 8.4, 23.0, 28.0),
     ('Yellow Tang', 'Zebrasoma flavescens', 'Saltwater', 8.1, 8.4, 24.0, 28.0);
+
+-- =====================================================================================
+-- TABELE DODATKOWE: LOGI PARAMETRÓW I SPRZĘT
+-- =====================================================================================
+
+-- Tabela dla logów parametrów wody
+CREATE TABLE water_logs (
+                            id_log UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                            id_tank UUID NOT NULL REFERENCES tanks(id_tank) ON DELETE CASCADE,
+                            ph_level NUMERIC(3,1) NOT NULL,
+                            temperature NUMERIC(4,1) NOT NULL,
+                            notes TEXT,
+                            logged_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela dla zainstalowanego sprzętu
+CREATE TABLE installed_equipment (
+                                     id_equipment UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                     id_tank UUID NOT NULL REFERENCES tanks(id_tank) ON DELETE CASCADE,
+                                     name VARCHAR(100) NOT NULL,
+                                     type VARCHAR(50) NOT NULL,
+                                     status VARCHAR(50) DEFAULT 'Active',
+                                     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

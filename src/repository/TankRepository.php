@@ -2,6 +2,7 @@
 
 require_once 'Repository.php';
 require_once __DIR__.'/../models/Tank.php';
+require_once __DIR__.'/../models/Log.php';
 
 class TankRepository extends Repository {
 
@@ -111,5 +112,33 @@ class TankRepository extends Repository {
             ':id' => $id,
             ':email' => $userEmail
         ]);
+    }
+
+    public function addWaterLog(string $tankId, float $ph, float $temp, ?string $notes): void {
+        $stmt = $this->database->connect()->prepare('
+            INSERT INTO public.water_logs (id_tank, ph_level, temperature, notes)
+            VALUES (:tankId, :ph, :temp, :notes)
+        ');
+        $stmt->execute([
+            ':tankId' => $tankId,
+            ':ph' => $ph,
+            ':temp' => $temp,
+            ':notes' => $notes
+        ]);
+    }
+
+    public function getLatestLog(string $tankId): ?Log {
+        $stmt = $this->database->connect()->prepare('
+            SELECT * FROM public.water_logs 
+            WHERE id_tank = :tankId 
+            ORDER BY logged_at DESC LIMIT 1
+        ');
+        $stmt->bindParam(':tankId', $tankId, PDO::PARAM_STR);
+        $stmt->execute();
+        $log = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$log) return null;
+
+        return new Log($log['id_log'], $log['id_tank'], $log['ph_level'], $log['temperature'], $log['notes'], $log['logged_at']);
     }
 }

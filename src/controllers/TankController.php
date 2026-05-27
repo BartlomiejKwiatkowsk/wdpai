@@ -63,7 +63,13 @@ class TankController extends AppController {
             die("Błąd 404/403: Akwarium nie istnieje lub brak uprawnień do jego przeglądania.");
         }
 
-        $this->render('tank-details', ['tank' => $tank]);
+        // Pobieranie ostatnich logów do wyświetlenia na kafelkach
+        $latestLog = $tankRepository->getLatestLog($tankId);
+
+        $this->render('tank-details', [
+            'tank' => $tank,
+            'latestLog' => $latestLog
+        ]);
     }
 
     public function editTank() {
@@ -101,5 +107,36 @@ class TankController extends AppController {
         }
 
         $this->render('edit-tank', ['tank' => $tank]);
+    }
+
+    public function addLog() {
+        session_start();
+
+        if (!isset($_SESSION['user_email'])) {
+            $url = "http://$_SERVER[HTTP_HOST]";
+            header("Location: {$url}/login");
+            exit();
+        }
+
+        if ($this->isPost()) {
+            $tankId = $_GET['id'] ?? null;
+            $tankRepository = new TankRepository();
+
+            // Zabezpieczenie: Sprawdzenie, czy ten użytkownik ma prawo do tego akwarium
+            $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
+
+            if ($tank) {
+                $tankRepository->addWaterLog(
+                    $tankId,
+                    (float)$_POST['ph_level'],
+                    (float)$_POST['temperature'],
+                    $_POST['log_notes']
+                );
+            }
+
+            $url = "http://$_SERVER[HTTP_HOST]";
+            header("Location: {$url}/tank_details?id=" . $tankId);
+            exit();
+        }
     }
 }

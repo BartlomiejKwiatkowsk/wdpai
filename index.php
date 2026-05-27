@@ -12,5 +12,6 @@ Routing::get('logout', 'logout');
 Routing::get('addTank', 'addTank');
 Routing::get('tank_details', 'tankDetails');
 Routing::get('editTank', 'editTank');
+Routing::get('addLog', 'addLog');
 
 Routing::run($path);
