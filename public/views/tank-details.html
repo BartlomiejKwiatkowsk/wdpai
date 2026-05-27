@@ -26,7 +26,7 @@
   <header class="topbar">
     <h2 class="page-title">Tank Details</h2>
     <div class="user-profile">
-      <span><?php echo $userEmail ?? 'Alex Morgan'; ?></span>
+      <span><?php echo $userEmail ?? 'Nieznany'; ?></span>
     </div>
   </header>
 
@@ -37,7 +37,7 @@
     </div>
     <div class="details-header-actions">
       <a href="/editTank?id=<?= $tank->getId(); ?>" class="btn-secondary" style="text-decoration: none;">✎ Edit Details</a>
-      <button class="btn-primary">+ Add Log Entry</button>
+      <button class="btn-primary" id="openLogModal">+ Add Log Entry</button>
     </div>
   </div>
 
@@ -50,20 +50,23 @@
     </div>
     <div class="param-card">
       <div class="param-icon">🧪</div>
-      <span class="param-status status-optimal">Stable</span>
+      <span class="param-status <?= (isset($latestLog) && $latestLog) ? 'status-optimal' : 'status-check'; ?>">
+                <?= (isset($latestLog) && $latestLog) ? 'Stable' : 'No Data'; ?>
+            </span>
       <div class="param-label">pH Level</div>
-      <div class="param-value">8.2</div>
+      <div class="param-value"><?= (isset($latestLog) && $latestLog) ? htmlspecialchars($latestLog->getPhLevel()) : '--'; ?></div>
     </div>
     <div class="param-card">
       <div class="param-icon">🌡️</div>
-      <span class="param-status status-check">Check</span>
+      <span class="param-status <?= (isset($latestLog) && $latestLog) ? 'status-optimal' : 'status-check'; ?>">
+                <?= (isset($latestLog) && $latestLog) ? 'Stable' : 'No Data'; ?>
+            </span>
       <div class="param-label">Temperature</div>
-      <div class="param-value">25.5°C</div>
+      <div class="param-value"><?= (isset($latestLog) && $latestLog) ? htmlspecialchars($latestLog->getTemperature()) . '°C' : '--'; ?></div>
     </div>
   </div>
 
   <div class="lists-grid">
-
     <div class="data-section">
       <div class="data-header">
         <h3>Installed Equipment</h3>
@@ -77,10 +80,6 @@
         <tr data-item-id="1" class="data-row">
           <td><strong>EcoTech Radion G5</strong></td><td>Lighting</td><td class="status-optimal">● Active</td>
           <td><button class="btn-icon delete-btn" data-type="equipment" data-id="1">🗑️</button></td>
-        </tr>
-        <tr data-item-id="2" class="data-row">
-          <td><strong>Heater 300W</strong></td><td>Temperature</td><td class="status-check">● Warning</td>
-          <td><button class="btn-icon delete-btn" data-type="equipment" data-id="2">🗑️</button></td>
         </tr>
         </tbody>
       </table>
@@ -103,8 +102,36 @@
         </tbody>
       </table>
     </div>
-
   </div>
+
+  <div class="modal-overlay" id="logModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Log Water Parameters</h3>
+        <button class="close-modal" id="closeLogModal">&times;</button>
+      </div>
+      <form action="/addLog?id=<?= $tank->getId(); ?>" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">pH Level</label>
+            <input type="number" step="0.1" name="ph_level" class="form-control" placeholder="np. 8.2" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Temperature (°C)</label>
+            <input type="number" step="0.1" name="temperature" class="form-control" placeholder="np. 25.5" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes (Optional)</label>
+          <textarea name="log_notes" class="form-control" style="min-height: 80px;"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-submit" style="width: 100%;">Save Log Entry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </main>
 
 <script src="/public/js/tank-management.js"></script>

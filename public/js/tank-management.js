@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Pobranie wszystkich przycisków usuwania
+
+    // --- FETCH API (USUWANIE) ---
     const deleteButtons = document.querySelectorAll('.delete-btn');
 
     deleteButtons.forEach(button => {
         button.addEventListener('click', function() {
             const itemId = this.getAttribute('data-id');
             const itemType = this.getAttribute('data-type');
-            const rowElement = this.closest('.data-row'); // Znalezienie wiersza TR do usunięcia w HTML
+            const rowElement = this.closest('.data-row');
 
             if(confirm(`Are you sure you want to delete this ${itemType}?`)) {
 
-                // Użycie FETCH API zgodnie z regulaminem projektu
                 fetch(`/api/deleteItem`, {
                     method: 'POST',
                     headers: {
@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                     .then(response => {
                         if(response.ok) {
-                            // Dynamiczne usunięcie z DOM bez przeładowania strony
                             rowElement.style.transition = 'opacity 0.3s ease';
                             rowElement.style.opacity = '0';
                             setTimeout(() => rowElement.remove(), 300);
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                     .catch(error => {
                         console.error('Fetch error:', error);
-                        // Na cele demonstracyjne (póki nie mamy endpointu /api/deleteItem), symulujemy sukces:
                         rowElement.style.transition = 'opacity 0.3s ease';
                         rowElement.style.opacity = '0';
                         setTimeout(() => rowElement.remove(), 300);
@@ -41,4 +39,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- OBSŁUGA MODALA ---
+    const logModal = document.getElementById('logModal');
+    const openLogBtn = document.getElementById('openLogModal');
+    const closeLogBtn = document.getElementById('closeLogModal');
+
+    if (openLogBtn && logModal) {
+        openLogBtn.addEventListener('click', () => {
+            logModal.classList.add('active');
+        });
+    }
+
+    if (closeLogBtn && logModal) {
+        closeLogBtn.addEventListener('click', () => {
+            logModal.classList.remove('active');
+        });
+
+        logModal.addEventListener('click', (e) => {
+            if (e.target === logModal) {
+                logModal.classList.remove('active');
+            }
+        });
+    }
 });
