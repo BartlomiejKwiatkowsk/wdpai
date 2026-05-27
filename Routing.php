@@ -31,7 +31,7 @@ class Routing {
         if ($controllerName === 'login' || $controllerName === 'logout') {
             require_once 'src/controllers/SecurityController.php';
             $object = new SecurityController();
-        } elseif ($controllerName === 'addTank' || $controllerName === 'tankDetails') {
+        } elseif ($controllerName === 'addTank' || $controllerName === 'tankDetails' || $controllerName === 'editTank') {
             require_once 'src/controllers/TankController.php';
             $object = new TankController();
         } else {

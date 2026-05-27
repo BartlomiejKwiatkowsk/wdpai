@@ -36,7 +36,7 @@
       <p style="color: var(--text-muted);"><?= isset($tank) ? htmlspecialchars($tank->getWaterType()) : 'Saltwater Mixed Reef'; ?> • Established 2026</p>
     </div>
     <div class="details-header-actions">
-      <button class="btn-secondary">✎ Edit Details</button>
+      <a href="/editTank?id=<?= $tank->getId(); ?>" class="btn-secondary" style="text-decoration: none;">✎ Edit Details</a>
       <button class="btn-primary">+ Add Log Entry</button>
     </div>
   </div>

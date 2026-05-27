@@ -10,6 +10,7 @@ Routing::get('dashboard', 'dashboard');
 Routing::get('', 'login');
 Routing::get('logout', 'logout');
 Routing::get('addTank', 'addTank');
-Routing::get('tank_details', 'tankDetails'); 
+Routing::get('tank_details', 'tankDetails');
+Routing::get('editTank', 'editTank');
 
 Routing::run($path);

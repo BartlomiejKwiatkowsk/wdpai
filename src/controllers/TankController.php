@@ -39,7 +39,6 @@ class TankController extends AppController {
         $this->render('add-tank');
     }
 
-    // Nowa metoda obsługująca widok zarządzania akwarium
     public function tankDetails() {
         session_start();
 
@@ -49,11 +48,58 @@ class TankController extends AppController {
             exit();
         }
 
-        // Pobieranie ID z paska adresu (przygotowanie pod logikę wyciągania danych z bazy)
         $tankId = $_GET['id'] ?? null;
 
-        // Na ten moment renderujemy czysty widok.
-        // W przyszłości pobierzemy tu dane konkretnego akwarium przez TankRepository
-        $this->render('tank-details');
+        if (!$tankId) {
+            $url = "http://$_SERVER[HTTP_HOST]";
+            header("Location: {$url}/dashboard");
+            exit();
+        }
+
+        $tankRepository = new TankRepository();
+        $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
+
+        if (!$tank) {
+            die("Błąd 404/403: Akwarium nie istnieje lub brak uprawnień do jego przeglądania.");
+        }
+
+        $this->render('tank-details', ['tank' => $tank]);
+    }
+
+    public function editTank() {
+        session_start();
+
+        if (!isset($_SESSION['user_email'])) {
+            $url = "http://$_SERVER[HTTP_HOST]";
+            header("Location: {$url}/login");
+            exit();
+        }
+
+        $tankId = $_GET['id'] ?? null;
+        $tankRepository = new TankRepository();
+        $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
+
+        if (!$tank) {
+            die("Błąd dostępu do zasobu.");
+        }
+
+        if ($this->isPost()) {
+            try {
+                $tankRepository->updateTank(
+                    $tankId,
+                    $_POST['name'],
+                    $_POST['water_type'],
+                    (int)$_POST['volume_liters'],
+                    $_SESSION['user_email']
+                );
+                $url = "http://$_SERVER[HTTP_HOST]";
+                header("Location: {$url}/tank_details?id=" . $tankId);
+                exit();
+            } catch (Exception $e) {
+                return $this->render('edit-tank', ['tank' => $tank, 'messages' => ['Błąd aktualizacji: ' . $e->getMessage()]]);
+            }
+        }
+
+        $this->render('edit-tank', ['tank' => $tank]);
     }
 }
