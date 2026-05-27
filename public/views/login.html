@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="public/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/login.css">
     <title>AquaManager - Login</title>
 </head>
-<body>
+<body class="login-view">
 <div class="login-container">
-    <img src="public/img/logo.png" alt="AquaLogo" class="logo-icon">
+    <img src="/public/img/logo.png" alt="AquaLogo" class="logo-icon">
     <h1>AquaManager</h1>
 
     <div class="messages">
-        <?php if(isset($messages)){
-                foreach($messages as $message) { echo $message; }
-            } ?>
+        <?php if(isset($messages)){ foreach($messages as $message) { echo $message; } } ?>
     </div>
 
-    <form action="login" method="POST">
+    <form action="/login" method="POST">
         <div class="input-group">
             <label>Email Address</label>
             <input type="email" name="email" placeholder="email@example.com" required>
@@ -25,7 +25,6 @@
             <label>Password</label>
             <input type="password" name="password" placeholder="••••••••" required>
         </div>
-
         <button type="submit" class="login-btn">Login</button>
     </form>
 

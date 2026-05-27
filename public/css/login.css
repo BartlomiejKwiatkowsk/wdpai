@@ -1,0 +1,94 @@
+/* AquaManager - Login View */
+body.login-view {
+    background: var(--bg-dark-gradient);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-white);
+}
+
+.login-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 50px 40px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: var(--shadow-glass);
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo-icon {
+    width: 70px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 10px var(--primary));
+}
+
+.login-container h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.input-group label {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.input-group input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 0;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus { border-color: var(--primary); }
+
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, #004e92, var(--primary));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 20px;
+    text-transform: uppercase;
+}
+
+.footer-links {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--primary); }
+.messages { color: #ff4d4d; font-size: 14px; margin-bottom: 20px; }
