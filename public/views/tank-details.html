@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/public/css/app.css">
+  <title>Tank Details - AquaManager</title>
+</head>
+<body class="app-view">
+
+<nav class="sidebar">
+  <div class="brand">
+    <img src="/public/img/logo.png" alt="Logo">
+    <span>AquaManager</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="/dashboard" class="active">My Tanks</a></li>
+    <li><a href="/catalog">Species Catalog</a></li>
+    <li><a href="/addTank">Add New Tank</a></li>
+  </ul>
+  <a href="/logout" class="logout-btn">Logout</a>
+</nav>
+
+<main class="main-content">
+  <header class="topbar">
+    <h2 class="page-title">Tank Details</h2>
+    <div class="user-profile">
+      <span><?php echo $userEmail ?? 'Alex Morgan'; ?></span>
+    </div>
+  </header>
+
+  <div class="details-header">
+    <div>
+      <h1 style="font-size: 28px;"><?= isset($tank) ? htmlspecialchars($tank->getName()) : 'Main Reef Tank'; ?></h1>
+      <p style="color: var(--text-muted);"><?= isset($tank) ? htmlspecialchars($tank->getWaterType()) : 'Saltwater Mixed Reef'; ?> • Established 2026</p>
+    </div>
+    <div class="details-header-actions">
+      <button class="btn-secondary">✎ Edit Details</button>
+      <button class="btn-primary">+ Add Log Entry</button>
+    </div>
+  </div>
+
+  <div class="params-grid">
+    <div class="param-card">
+      <div class="param-icon">💧</div>
+      <span class="param-status status-optimal">Optimal</span>
+      <div class="param-label">Total Volume</div>
+      <div class="param-value"><?= isset($tank) ? htmlspecialchars($tank->getVolume()) : '120'; ?> Liters</div>
+    </div>
+    <div class="param-card">
+      <div class="param-icon">🧪</div>
+      <span class="param-status status-optimal">Stable</span>
+      <div class="param-label">pH Level</div>
+      <div class="param-value">8.2</div>
+    </div>
+    <div class="param-card">
+      <div class="param-icon">🌡️</div>
+      <span class="param-status status-check">Check</span>
+      <div class="param-label">Temperature</div>
+      <div class="param-value">25.5°C</div>
+    </div>
+  </div>
+
+  <div class="lists-grid">
+
+    <div class="data-section">
+      <div class="data-header">
+        <h3>Installed Equipment</h3>
+        <a href="#" class="add-link">Add New</a>
+      </div>
+      <table class="data-table">
+        <thead>
+        <tr><th>Name</th><th>Type</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+        <tr data-item-id="1" class="data-row">
+          <td><strong>EcoTech Radion G5</strong></td><td>Lighting</td><td class="status-optimal">● Active</td>
+          <td><button class="btn-icon delete-btn" data-type="equipment" data-id="1">🗑️</button></td>
+        </tr>
+        <tr data-item-id="2" class="data-row">
+          <td><strong>Heater 300W</strong></td><td>Temperature</td><td class="status-check">● Warning</td>
+          <td><button class="btn-icon delete-btn" data-type="equipment" data-id="2">🗑️</button></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="data-section">
+      <div class="data-header">
+        <h3>Livestock</h3>
+        <a href="#" class="add-link">Add New</a>
+      </div>
+      <table class="data-table">
+        <thead>
+        <tr><th>Name</th><th>Qty</th><th>Health</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+        <tr data-item-id="101" class="data-row">
+          <td><strong>Ocellaris Clownfish</strong></td><td>2</td><td><span class="status-badge" style="position:static;">Excellent</span></td>
+          <td><button class="btn-icon delete-btn" data-type="livestock" data-id="101">🗑️</button></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+
+<script src="/public/js/tank-management.js"></script>
+</body>
+</html>
