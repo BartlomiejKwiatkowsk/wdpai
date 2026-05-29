@@ -60,13 +60,16 @@ class TankController extends AppController {
         }
 
         $latestLog = $tankRepository->getLatestLog($tankId);
-        // Pobieranie prawdziwego sprzętu z bazy
         $equipment = $tankRepository->getEquipmentForTank($tankId);
+        $livestock = $tankRepository->getLivestockForTank($tankId);
+        $speciesList = $tankRepository->getAllSpecies();
 
         $this->render('tank-details', [
             'tank' => $tank,
             'latestLog' => $latestLog,
-            'equipment' => $equipment
+            'equipment' => $equipment,
+            'livestock' => $livestock,
+            'speciesList' => $speciesList
         ]);
     }
 
@@ -120,7 +123,6 @@ class TankController extends AppController {
             $tankId = $_GET['id'] ?? null;
             $tankRepository = new TankRepository();
 
-            // Zabezpieczenie: Sprawdzenie, czy ten użytkownik ma prawo do tego akwarium
             $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
 
             if ($tank) {
@@ -137,6 +139,7 @@ class TankController extends AppController {
             exit();
         }
     }
+
     public function addEquipment() {
         session_start();
         if (!isset($_SESSION['user_email'])) {
@@ -158,7 +161,32 @@ class TankController extends AppController {
         }
     }
 
-    // Specjalny endpoint JSON dla Twojego Fetch API
+    public function addLivestock() {
+        session_start();
+        if (!isset($_SESSION['user_email'])) {
+            header("Location: http://$_SERVER[HTTP_HOST]/login");
+            exit();
+        }
+
+        if ($this->isPost()) {
+            $tankId = $_GET['id'] ?? null;
+            $tankRepository = new TankRepository();
+            $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
+
+            if ($tank) {
+                try {
+                    $tankRepository->addLivestock($tankId, $_POST['species_id'], (int)$_POST['quantity'], $_POST['health']);
+                    header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
+                    exit();
+                } catch (Exception $e) {
+                    $_SESSION['error_message'] = "Nie można dodać: " . $e->getMessage();
+                    header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
+                    exit();
+                }
+            }
+        }
+    }
+
     public function deleteItem() {
         session_start();
         if (!isset($_SESSION['user_email'])) {

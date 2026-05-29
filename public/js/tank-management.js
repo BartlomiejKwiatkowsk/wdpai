@@ -77,4 +77,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === eqModal) eqModal.classList.remove('active');
         });
     }
+    // --- OBSŁUGA MODALA OBSADY (LIVESTOCK) ---
+    const liveModal = document.getElementById('liveModal');
+    const openLiveBtn = document.getElementById('openLiveModal');
+    const closeLiveBtn = document.getElementById('closeLiveModal');
+
+    if (openLiveBtn && liveModal) {
+        openLiveBtn.addEventListener('click', () => liveModal.classList.add('active'));
+    }
+
+    if (closeLiveBtn && liveModal) {
+        closeLiveBtn.addEventListener('click', () => liveModal.classList.remove('active'));
+        liveModal.addEventListener('click', (e) => {
+            if (e.target === liveModal) liveModal.classList.remove('active');
+        });
+    }
 });

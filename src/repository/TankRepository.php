@@ -4,6 +4,8 @@ require_once 'Repository.php';
 require_once __DIR__.'/../models/Tank.php';
 require_once __DIR__.'/../models/Log.php';
 require_once __DIR__.'/../models/Equipment.php';
+require_once __DIR__.'/../models/Species.php';
+require_once __DIR__.'/../models/Livestock.php';
 
 class TankRepository extends Repository {
 
@@ -177,14 +179,62 @@ class TankRepository extends Repository {
         ]);
     }
 
+    public function getAllSpecies(): array {
+        $stmt = $this->database->connect()->prepare('SELECT id_species, common_name FROM public.species ORDER BY common_name ASC');
+        $stmt->execute();
+
+        $result = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $result[] = new Species($row['id_species'], $row['common_name']);
+        }
+        return $result;
+    }
+
+    public function getLivestockForTank(string $tankId): array {
+        $stmt = $this->database->connect()->prepare('
+            SELECT tl.id_livestock, s.common_name, tl.quantity, tl.health 
+            FROM public.tank_livestock tl
+            JOIN public.species s ON tl.id_species = s.id_species
+            WHERE tl.id_tank = :tankId
+            ORDER BY tl.added_at DESC
+        ');
+        $stmt->bindParam(':tankId', $tankId, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $result = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $result[] = new Livestock($row['id_livestock'], $row['common_name'], $row['quantity'], $row['health']);
+        }
+        return $result;
+    }
+
+    public function addLivestock(string $tankId, string $speciesId, int $quantity, string $health): void {
+        // Używamy ON CONFLICT aby w razie dodawania tego samego gatunku, po prostu zsumować ich ilość
+        $stmt = $this->database->connect()->prepare('
+            INSERT INTO public.tank_livestock (id_tank, id_species, quantity, health)
+            VALUES (:tankId, :speciesId, :quantity, :health)
+            ON CONFLICT (id_tank, id_species) 
+            DO UPDATE SET quantity = public.tank_livestock.quantity + EXCLUDED.quantity, health = EXCLUDED.health
+        ');
+        $stmt->execute([
+            ':tankId' => $tankId,
+            ':speciesId' => $speciesId,
+            ':quantity' => $quantity,
+            ':health' => $health
+        ]);
+    }
+
     public function deleteItem(string $id, string $type): bool {
         $conn = $this->database->connect();
-        // Sprawdzamy typ, aby JS nie mógł usunąć rekordu z niewłaściwej tabeli
         if ($type === 'equipment') {
             $stmt = $conn->prepare('DELETE FROM public.installed_equipment WHERE id_equipment = :id');
-            $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-            return $stmt->execute();
+        } elseif ($type === 'livestock') {
+            $stmt = $conn->prepare('DELETE FROM public.tank_livestock WHERE id_livestock = :id');
+        } else {
+            return false;
         }
-        return false;
+
+        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+        return $stmt->execute();
     }
 }

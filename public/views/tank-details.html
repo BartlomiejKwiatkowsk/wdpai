@@ -10,10 +10,7 @@
 <body class="app-view">
 
 <nav class="sidebar">
-  <div class="brand">
-    <img src="/public/img/logo.png" alt="Logo">
-    <span>AquaManager</span>
-  </div>
+  <div class="brand"><img src="/public/img/logo.png" alt="Logo"><span>AquaManager</span></div>
   <ul class="nav-links">
     <li><a href="/dashboard" class="active">My Tanks</a></li>
     <li><a href="/catalog">Species Catalog</a></li>
@@ -25,9 +22,7 @@
 <main class="main-content">
   <header class="topbar">
     <h2 class="page-title">Tank Details</h2>
-    <div class="user-profile">
-      <span><?php echo $userEmail ?? 'Nieznany'; ?></span>
-    </div>
+    <div class="user-profile"><span><?php echo $userEmail ?? 'Nieznany'; ?></span></div>
   </header>
 
   <div class="details-header">
@@ -40,6 +35,13 @@
       <button class="btn-primary" id="openLogModal">+ Add Log Entry</button>
     </div>
   </div>
+
+  <?php
+    if (isset($_SESSION['error_message'])) {
+        echo "<div style='background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-bottom: 20px;'>".htmlspecialchars($_SESSION['error_message'])."</div>";
+  unset($_SESSION['error_message']);
+  }
+  ?>
 
   <div class="params-grid">
     <div class="param-card">
@@ -73,9 +75,7 @@
         <button class="add-link" id="openEqModal" style="border:none; background:transparent; cursor:pointer;">Add New</button>
       </div>
       <table class="data-table">
-        <thead>
-        <tr><th>Name</th><th>Type</th><th>Status</th><th>Action</th></tr>
-        </thead>
+        <thead><tr><th>Name</th><th>Type</th><th>Status</th><th>Action</th></tr></thead>
         <tbody>
         <?php if(isset($equipment) && count($equipment) > 0): ?>
         <?php foreach ($equipment as $eq): ?>
@@ -96,17 +96,23 @@
     <div class="data-section">
       <div class="data-header">
         <h3>Livestock</h3>
-        <a href="#" class="add-link">Add New</a>
+        <button class="add-link" id="openLiveModal" style="border:none; background:transparent; cursor:pointer;">Add New</button>
       </div>
       <table class="data-table">
-        <thead>
-        <tr><th>Name</th><th>Qty</th><th>Health</th><th>Action</th></tr>
-        </thead>
+        <thead><tr><th>Species</th><th>Qty</th><th>Health</th><th>Action</th></tr></thead>
         <tbody>
-        <tr data-item-id="101" class="data-row">
-          <td><strong>Ocellaris Clownfish</strong></td><td>2</td><td><span class="status-badge" style="position:static;">Excellent</span></td>
-          <td><button class="btn-icon delete-btn" data-type="livestock" data-id="101">🗑️</button></td>
+        <?php if(isset($livestock) && count($livestock) > 0): ?>
+        <?php foreach ($livestock as $live): ?>
+        <tr data-item-id="<?= $live->getId(); ?>" class="data-row">
+          <td><strong><?= htmlspecialchars($live->getSpeciesName()); ?></strong></td>
+          <td><?= htmlspecialchars($live->getQuantity()); ?></td>
+          <td><span class="status-badge <?= $live->getHealth() === 'Excellent' || $live->getHealth() === 'Good' ? '' : 'status-check'; ?>" style="position:static;"><?= htmlspecialchars($live->getHealth()); ?></span></td>
+          <td><button class="btn-icon delete-btn" data-type="livestock" data-id="<?= $live->getId(); ?>">🗑️</button></td>
         </tr>
+        <?php endforeach; ?>
+        <?php else: ?>
+        <tr><td colspan="4" style="text-align:center; color:#888;">Tank is currently empty.</td></tr>
+        <?php endif; ?>
         </tbody>
       </table>
     </div>
@@ -114,65 +120,70 @@
 
   <div class="modal-overlay" id="logModal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Log Water Parameters</h3>
-        <button class="close-modal" id="closeLogModal">&times;</button>
-      </div>
+      <div class="modal-header"><h3 class="modal-title">Log Water Parameters</h3><button class="close-modal" id="closeLogModal">&times;</button></div>
       <form action="/addLog?id=<?= $tank->getId(); ?>" method="POST">
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">pH Level</label>
-            <input type="number" step="0.1" name="ph_level" class="form-control" placeholder="np. 8.2" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Temperature (°C)</label>
-            <input type="number" step="0.1" name="temperature" class="form-control" placeholder="np. 25.5" required>
-          </div>
+          <div class="form-group"><label class="form-label">pH Level</label><input type="number" step="0.1" name="ph_level" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">Temperature (°C)</label><input type="number" step="0.1" name="temperature" class="form-control" required></div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Notes (Optional)</label>
-          <textarea name="log_notes" class="form-control" style="min-height: 80px;"></textarea>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-submit" style="width: 100%;">Save Log Entry</button>
-        </div>
+        <div class="form-group"><label class="form-label">Notes</label><textarea name="log_notes" class="form-control" style="min-height: 80px;"></textarea></div>
+        <div class="form-actions"><button type="submit" class="btn-submit" style="width: 100%;">Save</button></div>
       </form>
     </div>
   </div>
 
   <div class="modal-overlay" id="eqModal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Install Equipment</h3>
-        <button class="close-modal" id="closeEqModal">&times;</button>
-      </div>
+      <div class="modal-header"><h3 class="modal-title">Install Equipment</h3><button class="close-modal" id="closeEqModal">&times;</button></div>
       <form action="/addEquipment?id=<?= $tank->getId(); ?>" method="POST">
-        <div class="form-group">
-          <label class="form-label">Equipment Name</label>
-          <input type="text" name="eq_name" class="form-control" placeholder="e.g. Heater 300W" required>
-        </div>
+        <div class="form-group"><label class="form-label">Equipment Name</label><input type="text" name="eq_name" class="form-control" required></div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Type</label>
             <select name="eq_type" class="form-control" required>
-              <option value="Lighting">Lighting</option>
-              <option value="Temperature">Temperature</option>
-              <option value="Filtration">Filtration</option>
-              <option value="Flow">Flow / Wavemaker</option>
+              <option value="Lighting">Lighting</option><option value="Temperature">Temperature</option><option value="Filtration">Filtration</option><option value="Flow">Flow</option>
             </select>
           </div>
           <div class="form-group">
             <label class="form-label">Status</label>
             <select name="eq_status" class="form-control" required>
-              <option value="Active">Active</option>
-              <option value="Warning">Warning</option>
-              <option value="Offline">Offline</option>
+              <option value="Active">Active</option><option value="Warning">Warning</option><option value="Offline">Offline</option>
             </select>
           </div>
         </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-submit" style="width: 100%;">Save Equipment</button>
+        <div class="form-actions"><button type="submit" class="btn-submit" style="width: 100%;">Save</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="liveModal">
+    <div class="modal-content">
+      <div class="modal-header"><h3 class="modal-title">Add Livestock</h3><button class="close-modal" id="closeLiveModal">&times;</button></div>
+      <form action="/addLivestock?id=<?= $tank->getId(); ?>" method="POST">
+        <div class="form-group">
+          <label class="form-label">Select Species</label>
+          <select name="species_id" class="form-control" required>
+            <?php if(isset($speciesList)): foreach($speciesList as $species): ?>
+            <option value="<?= $species->getId(); ?>"><?= htmlspecialchars($species->getName()); ?></option>
+            <?php endforeach; endif; ?>
+          </select>
         </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Quantity</label>
+            <input type="number" name="quantity" class="form-control" value="1" min="1" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Health</label>
+            <select name="health" class="form-control" required>
+              <option value="Excellent">Excellent</option>
+              <option value="Good">Good</option>
+              <option value="Monitor">Monitor</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn-submit" style="width: 100%;">Add to Tank</button></div>
       </form>
     </div>
   </div>
