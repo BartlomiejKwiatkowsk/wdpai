@@ -70,17 +70,25 @@
     <div class="data-section">
       <div class="data-header">
         <h3>Installed Equipment</h3>
-        <a href="#" class="add-link">Add New</a>
+        <button class="add-link" id="openEqModal" style="border:none; background:transparent; cursor:pointer;">Add New</button>
       </div>
       <table class="data-table">
         <thead>
         <tr><th>Name</th><th>Type</th><th>Status</th><th>Action</th></tr>
         </thead>
         <tbody>
-        <tr data-item-id="1" class="data-row">
-          <td><strong>EcoTech Radion G5</strong></td><td>Lighting</td><td class="status-optimal">● Active</td>
-          <td><button class="btn-icon delete-btn" data-type="equipment" data-id="1">🗑️</button></td>
+        <?php if(isset($equipment) && count($equipment) > 0): ?>
+        <?php foreach ($equipment as $eq): ?>
+        <tr data-item-id="<?= $eq->getId(); ?>" class="data-row">
+          <td><strong><?= htmlspecialchars($eq->getName()); ?></strong></td>
+          <td><?= htmlspecialchars($eq->getType()); ?></td>
+          <td class="<?= $eq->getStatus() === 'Active' ? 'status-optimal' : 'status-check'; ?>">● <?= htmlspecialchars($eq->getStatus()); ?></td>
+          <td><button class="btn-icon delete-btn" data-type="equipment" data-id="<?= $eq->getId(); ?>">🗑️</button></td>
         </tr>
+        <?php endforeach; ?>
+        <?php else: ?>
+        <tr><td colspan="4" style="text-align:center; color:#888;">No equipment installed.</td></tr>
+        <?php endif; ?>
         </tbody>
       </table>
     </div>
@@ -127,6 +135,43 @@
         </div>
         <div class="form-actions">
           <button type="submit" class="btn-submit" style="width: 100%;">Save Log Entry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="eqModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Install Equipment</h3>
+        <button class="close-modal" id="closeEqModal">&times;</button>
+      </div>
+      <form action="/addEquipment?id=<?= $tank->getId(); ?>" method="POST">
+        <div class="form-group">
+          <label class="form-label">Equipment Name</label>
+          <input type="text" name="eq_name" class="form-control" placeholder="e.g. Heater 300W" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select name="eq_type" class="form-control" required>
+              <option value="Lighting">Lighting</option>
+              <option value="Temperature">Temperature</option>
+              <option value="Filtration">Filtration</option>
+              <option value="Flow">Flow / Wavemaker</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select name="eq_status" class="form-control" required>
+              <option value="Active">Active</option>
+              <option value="Warning">Warning</option>
+              <option value="Offline">Offline</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-submit" style="width: 100%;">Save Equipment</button>
         </div>
       </form>
     </div>

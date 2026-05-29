@@ -3,6 +3,7 @@
 require_once 'Repository.php';
 require_once __DIR__.'/../models/Tank.php';
 require_once __DIR__.'/../models/Log.php';
+require_once __DIR__.'/../models/Equipment.php';
 
 class TankRepository extends Repository {
 
@@ -140,5 +141,50 @@ class TankRepository extends Repository {
         if (!$log) return null;
 
         return new Log($log['id_log'], $log['id_tank'], $log['ph_level'], $log['temperature'], $log['notes'], $log['logged_at']);
+    }
+    public function getEquipmentForTank(string $tankId): array {
+        $stmt = $this->database->connect()->prepare('
+            SELECT * FROM public.installed_equipment WHERE id_tank = :tankId ORDER BY added_at DESC
+        ');
+        $stmt->bindParam(':tankId', $tankId, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $equipmentList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = [];
+
+        foreach ($equipmentList as $eq) {
+            $result[] = new Equipment(
+                $eq['id_equipment'],
+                $eq['id_tank'],
+                $eq['name'],
+                $eq['type'],
+                $eq['status']
+            );
+        }
+        return $result;
+    }
+
+    public function addEquipment(string $tankId, string $name, string $type, string $status): void {
+        $stmt = $this->database->connect()->prepare('
+            INSERT INTO public.installed_equipment (id_tank, name, type, status)
+            VALUES (:tankId, :name, :type, :status)
+        ');
+        $stmt->execute([
+            ':tankId' => $tankId,
+            ':name' => $name,
+            ':type' => $type,
+            ':status' => $status
+        ]);
+    }
+
+    public function deleteItem(string $id, string $type): bool {
+        $conn = $this->database->connect();
+        // Sprawdzamy typ, aby JS nie mógł usunąć rekordu z niewłaściwej tabeli
+        if ($type === 'equipment') {
+            $stmt = $conn->prepare('DELETE FROM public.installed_equipment WHERE id_equipment = :id');
+            $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+            return $stmt->execute();
+        }
+        return false;
     }
 }

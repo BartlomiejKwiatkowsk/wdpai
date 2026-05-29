@@ -29,7 +29,7 @@ class Routing {
         if ($controllerName === 'login' || $controllerName === 'logout') {
             require_once 'src/controllers/SecurityController.php';
             $object = new SecurityController();
-        } elseif ($controllerName === 'addTank' || $controllerName === 'tankDetails' || $controllerName === 'editTank' || $controllerName === 'addLog') {
+        } elseif ($controllerName === 'addTank' || $controllerName === 'tankDetails' || $controllerName === 'editTank' || $controllerName === 'addLog' || $controllerName === 'addEquipment' || $controllerName === 'deleteItem') {
             require_once 'src/controllers/TankController.php';
             $object = new TankController();
         } else {

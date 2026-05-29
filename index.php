@@ -13,5 +13,7 @@ Routing::get('addTank', 'addTank');
 Routing::get('tank_details', 'tankDetails');
 Routing::get('editTank', 'editTank');
 Routing::get('addLog', 'addLog');
+Routing::get('addEquipment', 'addEquipment');
+Routing::get('api/deleteItem', 'deleteItem');
 
 Routing::run($path);

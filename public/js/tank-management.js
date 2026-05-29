@@ -62,4 +62,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    // --- OBSŁUGA MODALA SPRZĘTU ---
+    const eqModal = document.getElementById('eqModal');
+    const openEqBtn = document.getElementById('openEqModal');
+    const closeEqBtn = document.getElementById('closeEqModal');
+
+    if (openEqBtn && eqModal) {
+        openEqBtn.addEventListener('click', () => eqModal.classList.add('active'));
+    }
+
+    if (closeEqBtn && eqModal) {
+        closeEqBtn.addEventListener('click', () => eqModal.classList.remove('active'));
+        eqModal.addEventListener('click', (e) => {
+            if (e.target === eqModal) eqModal.classList.remove('active');
+        });
+    }
 });
