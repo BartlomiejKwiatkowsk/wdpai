@@ -14,9 +14,10 @@ Routing::get('tank_details', 'tankDetails');
 Routing::get('editTank', 'editTank');
 Routing::get('addLog', 'addLog');
 Routing::get('addEquipment', 'addEquipment');
-Routing::get('api/deleteItem', 'deleteItem');
 Routing::get('addLivestock', 'addLivestock');
 Routing::get('catalog', 'speciesCatalog');
 Routing::get('addSpeciesToTank', 'addSpeciesToTankAction');
+Routing::post('createNewSpecies', 'createNewSpecies');
+Routing::post('deleteItem', 'deleteItem');
 
 Routing::run($path);

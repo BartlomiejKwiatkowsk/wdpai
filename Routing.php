@@ -9,6 +9,11 @@ class Routing {
         self::$routes[$url] = $view;
     }
 
+    // Dodana brakująca metoda POST
+    public static function post($url, $view) {
+        self::$routes[$url] = $view;
+    }
+
     public static function run($url) {
         if ($url === '') {
             $url = '';
@@ -32,7 +37,7 @@ class Routing {
         } elseif ($controllerName === 'addTank' || $controllerName === 'tankDetails' || $controllerName === 'editTank' || $controllerName === 'addLog' || $controllerName === 'addEquipment' || $controllerName === 'addLivestock' || $controllerName === 'deleteItem') {
             require_once 'src/controllers/TankController.php';
             $object = new TankController();
-        } elseif ($controllerName === 'speciesCatalog' || $controllerName === 'addSpeciesToTankAction') {
+        } elseif ($controllerName === 'speciesCatalog' || $controllerName === 'addSpeciesToTankAction' || $controllerName === 'createNewSpecies') {
             require_once 'src/controllers/SpeciesController.php';
             $object = new SpeciesController();
         } else {

@@ -1,13 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- FETCH API (USUWANIE) ---
+    // --- 1. GENERYCZNA OBSŁUGA MODALI ---
+    const initModal = (openBtnId, closeBtnId, modalId) => {
+        const openBtn = document.getElementById(openBtnId);
+        const closeBtn = document.getElementById(closeBtnId);
+        const modal = document.getElementById(modalId);
+
+        if (!openBtn || !closeBtn || !modal) return;
+
+        openBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.classList.remove('active');
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        });
+    };
+
+    // Inicjalizacja wszystkich okien
+    initModal('openLogModal', 'closeLogModal', 'logModal');
+    initModal('openEqModal', 'closeEqModal', 'eqModal');
+    initModal('openLiveModal', 'closeLiveModal', 'liveModal');
+
+    // --- 2. FETCH API (USUWANIE) ---
     const deleteButtons = document.querySelectorAll('.delete-btn');
 
     deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
             const itemId = this.getAttribute('data-id');
             const itemType = this.getAttribute('data-type');
-            const rowElement = this.closest('.data-row');
+            const rowElement = this.closest('.data-row'); // Dopasowane do nowej klasy w HTML
 
             if(confirm(`Are you sure you want to delete this ${itemType}?`)) {
 
@@ -32,64 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                     .catch(error => {
                         console.error('Fetch error:', error);
-                        rowElement.style.transition = 'opacity 0.3s ease';
-                        rowElement.style.opacity = '0';
-                        setTimeout(() => rowElement.remove(), 300);
+                        alert('Critical Error: Failed to connect to the server.');
                     });
             }
         });
     });
 
-    // --- OBSŁUGA MODALA ---
-    const logModal = document.getElementById('logModal');
-    const openLogBtn = document.getElementById('openLogModal');
-    const closeLogBtn = document.getElementById('closeLogModal');
-
-    if (openLogBtn && logModal) {
-        openLogBtn.addEventListener('click', () => {
-            logModal.classList.add('active');
-        });
-    }
-
-    if (closeLogBtn && logModal) {
-        closeLogBtn.addEventListener('click', () => {
-            logModal.classList.remove('active');
-        });
-
-        logModal.addEventListener('click', (e) => {
-            if (e.target === logModal) {
-                logModal.classList.remove('active');
-            }
-        });
-    }
-    // --- OBSŁUGA MODALA SPRZĘTU ---
-    const eqModal = document.getElementById('eqModal');
-    const openEqBtn = document.getElementById('openEqModal');
-    const closeEqBtn = document.getElementById('closeEqModal');
-
-    if (openEqBtn && eqModal) {
-        openEqBtn.addEventListener('click', () => eqModal.classList.add('active'));
-    }
-
-    if (closeEqBtn && eqModal) {
-        closeEqBtn.addEventListener('click', () => eqModal.classList.remove('active'));
-        eqModal.addEventListener('click', (e) => {
-            if (e.target === eqModal) eqModal.classList.remove('active');
-        });
-    }
-    // --- OBSŁUGA MODALA OBSADY (LIVESTOCK) ---
-    const liveModal = document.getElementById('liveModal');
-    const openLiveBtn = document.getElementById('openLiveModal');
-    const closeLiveBtn = document.getElementById('closeLiveModal');
-
-    if (openLiveBtn && liveModal) {
-        openLiveBtn.addEventListener('click', () => liveModal.classList.add('active'));
-    }
-
-    if (closeLiveBtn && liveModal) {
-        closeLiveBtn.addEventListener('click', () => liveModal.classList.remove('active'));
-        liveModal.addEventListener('click', (e) => {
-            if (e.target === liveModal) liveModal.classList.remove('active');
-        });
-    }
 });

@@ -170,7 +170,7 @@
           <label class="form-label">Select Species</label>
           <select name="species_id" class="form-control" required>
             <?php if(isset($speciesList)): foreach($speciesList as $species): ?>
-            <option value="<?= $species->getId(); ?>"><?= htmlspecialchars($species->getName()); ?></option>
+            <option value="<?= $species->getId(); ?>"><?= htmlspecialchars($species->getCommonName()); ?></option>
             <?php endforeach; endif; ?>
           </select>
         </div>

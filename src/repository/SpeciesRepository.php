@@ -43,4 +43,20 @@ class SpeciesRepository extends Repository {
             ':health' => $health
         ]);
     }
+    public function addNewSpecies(Species $species): void {
+        $stmt = $this->database->connect()->prepare('
+            INSERT INTO public.species (common_name, scientific_name, water_compatibility, ideal_ph_min, ideal_ph_max, ideal_temp_min, ideal_temp_max, image_path)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ');
+        $stmt->execute([
+            $species->getCommonName(),
+            $species->getScientificName(),
+            $species->getWaterType(),
+            $species->getPhMin(),
+            $species->getPhMax(),
+            $species->getTempMin(),
+            $species->getTempMax(),
+            $species->getImagePath()
+        ]);
+    }
 }

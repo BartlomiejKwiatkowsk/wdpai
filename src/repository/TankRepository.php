@@ -179,13 +179,24 @@ class TankRepository extends Repository {
         ]);
     }
 
+    // Zaktualizowana funkcja pobierająca pełne dane gatunków
     public function getAllSpecies(): array {
-        $stmt = $this->database->connect()->prepare('SELECT id_species, common_name FROM public.species ORDER BY common_name ASC');
+        $stmt = $this->database->connect()->prepare('SELECT * FROM public.species ORDER BY common_name ASC');
         $stmt->execute();
 
         $result = [];
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-            $result[] = new Species($row['id_species'], $row['common_name']);
+            $result[] = new Species(
+                $row['id_species'],
+                $row['common_name'],
+                $row['scientific_name'],
+                $row['water_compatibility'],
+                $row['ideal_ph_min'],
+                $row['ideal_ph_max'],
+                $row['ideal_temp_min'],
+                $row['ideal_temp_max'],
+                $row['image_path']
+            );
         }
         return $result;
     }
@@ -209,7 +220,6 @@ class TankRepository extends Repository {
     }
 
     public function addLivestock(string $tankId, string $speciesId, int $quantity, string $health): void {
-        // Używamy ON CONFLICT aby w razie dodawania tego samego gatunku, po prostu zsumować ich ilość
         $stmt = $this->database->connect()->prepare('
             INSERT INTO public.tank_livestock (id_tank, id_species, quantity, health)
             VALUES (:tankId, :speciesId, :quantity, :health)
