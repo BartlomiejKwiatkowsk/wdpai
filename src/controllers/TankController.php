@@ -114,76 +114,36 @@ class TankController extends AppController {
         session_start();
 
         if (!isset($_SESSION['user_email'])) {
-            $url = "http://$_SERVER[HTTP_HOST]";
-            header("Location: {$url}/login");
+            header("Location: http://$_SERVER[HTTP_HOST]/login");
             exit();
         }
 
         if ($this->isPost()) {
             $tankId = $_GET['id'] ?? null;
-            $tankRepository = new TankRepository();
+            $phLevel = (float)$_POST['ph_level'];
+            $temperature = (float)$_POST['temperature'];
 
+            // Twarda walidacja backendowa zabezpieczająca przed PDOException
+            if ($phLevel < 0 || $phLevel > 14 || $temperature < 10 || $temperature > 50) {
+                $_SESSION['error_message'] = "Błąd zapisu parametrów: pH musi znajdować się w przedziale od 0 do 14, a temperatura od 10°C do 50°C.";
+                header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
+                exit();
+            }
+
+            $tankRepository = new TankRepository();
             $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
 
             if ($tank) {
                 $tankRepository->addWaterLog(
                     $tankId,
-                    (float)$_POST['ph_level'],
-                    (float)$_POST['temperature'],
+                    $phLevel,
+                    $temperature,
                     $_POST['log_notes']
                 );
             }
 
-            $url = "http://$_SERVER[HTTP_HOST]";
-            header("Location: {$url}/tank_details?id=" . $tankId);
-            exit();
-        }
-    }
-
-    public function addEquipment() {
-        session_start();
-        if (!isset($_SESSION['user_email'])) {
-            header("Location: http://$_SERVER[HTTP_HOST]/login");
-            exit();
-        }
-
-        if ($this->isPost()) {
-            $tankId = $_GET['id'] ?? null;
-            $tankRepository = new TankRepository();
-            $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
-
-            if ($tank) {
-                $tankRepository->addEquipment($tankId, $_POST['eq_name'], $_POST['eq_type'], $_POST['eq_status']);
-            }
-
             header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
             exit();
-        }
-    }
-
-    public function addLivestock() {
-        session_start();
-        if (!isset($_SESSION['user_email'])) {
-            header("Location: http://$_SERVER[HTTP_HOST]/login");
-            exit();
-        }
-
-        if ($this->isPost()) {
-            $tankId = $_GET['id'] ?? null;
-            $tankRepository = new TankRepository();
-            $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
-
-            if ($tank) {
-                try {
-                    $tankRepository->addLivestock($tankId, $_POST['species_id'], (int)$_POST['quantity'], $_POST['health']);
-                    header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
-                    exit();
-                } catch (Exception $e) {
-                    $_SESSION['error_message'] = "Nie można dodać: " . $e->getMessage();
-                    header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
-                    exit();
-                }
-            }
         }
     }
 
