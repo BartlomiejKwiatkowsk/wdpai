@@ -32,6 +32,9 @@ class Routing {
         } elseif ($controllerName === 'addTank' || $controllerName === 'tankDetails' || $controllerName === 'editTank' || $controllerName === 'addLog' || $controllerName === 'addEquipment' || $controllerName === 'addLivestock' || $controllerName === 'deleteItem') {
             require_once 'src/controllers/TankController.php';
             $object = new TankController();
+        } elseif ($controllerName === 'speciesCatalog' || $controllerName === 'addSpeciesToTankAction') {
+            require_once 'src/controllers/SpeciesController.php';
+            $object = new SpeciesController();
         } else {
             require_once 'src/controllers/DefaultController.php';
             $object = new DefaultController();

@@ -147,6 +147,63 @@ class TankController extends AppController {
         }
     }
 
+    public function addEquipment() {
+        session_start();
+        if (!isset($_SESSION['user_email'])) {
+            header("Location: http://$_SERVER[HTTP_HOST]/login");
+            exit();
+        }
+
+        if ($this->isPost()) {
+            $tankId = $_GET['id'] ?? null;
+            $tankRepository = new TankRepository();
+            $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
+
+            if ($tank) {
+                $tankRepository->addEquipment($tankId, $_POST['eq_name'], $_POST['eq_type'], $_POST['eq_status']);
+            }
+
+            header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
+            exit();
+        }
+    }
+
+    public function addLivestock() {
+        session_start();
+        if (!isset($_SESSION['user_email'])) {
+            header("Location: http://$_SERVER[HTTP_HOST]/login");
+            exit();
+        }
+
+        if ($this->isPost()) {
+            $tankId = $_GET['id'] ?? null;
+            $tankRepository = new TankRepository();
+            $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
+
+            if ($tank) {
+                try {
+                    $tankRepository->addLivestock($tankId, $_POST['species_id'], (int)$_POST['quantity'], $_POST['health']);
+                    header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
+                    exit();
+                } catch (Exception $e) {
+                    $rawError = $e->getMessage();
+
+                    // Ekstrakcja czystego komunikatu błędu
+                    if (strpos($rawError, 'Niezgodność ekosystemu') !== false) {
+                        $cleanError = preg_replace('/^.*?ERROR:\s*/', '', $rawError);
+                        $cleanError = explode('CONTEXT:', $cleanError)[0];
+                        $_SESSION['error_message'] = trim($cleanError);
+                    } else {
+                        $_SESSION['error_message'] = "Wystąpił krytyczny błąd bazy danych.";
+                    }
+
+                    header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
+                    exit();
+                }
+            }
+        }
+    }
+
     public function deleteItem() {
         session_start();
         if (!isset($_SESSION['user_email'])) {

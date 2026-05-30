@@ -499,3 +499,68 @@ textarea.form-control {
 .close-modal:hover {
     color: var(--danger);
 }
+/* --- Species Catalog --- */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.species-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+
+.species-img {
+    height: 180px;
+    background: #131C23;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.species-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.species-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.species-info h3 { margin: 0 0 5px 0; font-size: 18px; }
+.species-info .scientific { font-size: 13px; color: var(--text-muted); font-style: italic; margin-bottom: 15px; }
+
+.species-params {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.species-params span {
+    background: #f4f6f8;
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: var(--text-dark);
+}
+
+.btn-full {
+    width: 100%;
+    margin-top: auto;
+    text-align: center;
+    cursor: pointer;
+}

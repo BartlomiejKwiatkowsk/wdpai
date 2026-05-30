@@ -9,7 +9,6 @@ CREATE TYPE tank_status_enum AS ENUM ('Healthy', 'Attention', 'Empty', 'Quaranti
 CREATE TYPE health_status_enum AS ENUM ('Excellent', 'Good', 'Monitor', 'Critical');
 
 -- 2. RELACJA JEDEN-DO-JEDNEGO (1:1)
--- Spełnienie wymogu: Rozszerzenie danych użytkownika bez obciążania tabeli autoryzacyjnej
 CREATE TABLE user_profiles (
                                id_user UUID PRIMARY KEY REFERENCES users(id_user) ON DELETE CASCADE,
                                full_name VARCHAR(100),
@@ -18,7 +17,6 @@ CREATE TABLE user_profiles (
 );
 
 -- 3. RELACJA JEDEN-DO-WIELU (1:N)
--- Spełnienie wymogu: Jeden użytkownik może posiadać wiele zbiorników (Dashboard -> My Tanks)
 CREATE TABLE tanks (
                        id_tank UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                        id_user UUID NOT NULL REFERENCES users(id_user) ON DELETE CASCADE,
@@ -41,12 +39,12 @@ CREATE TABLE species (
                          water_compatibility water_type_enum NOT NULL,
                          ideal_ph_min NUMERIC(3,1),
                          ideal_ph_max NUMERIC(3,1),
-                         ideal_temp_min NUMERIC(4,1), -- w stopniach Celsjusza
-                         ideal_temp_max NUMERIC(4,1)
+                         ideal_temp_min NUMERIC(4,1),
+                         ideal_temp_max NUMERIC(4,1),
+                         image_path VARCHAR(255) DEFAULT '/public/img/catalog/placeholder.png'
 );
 
 -- 5. RELACJA WIELE-DO-WIELU (N:M)
--- Spełnienie wymogu: Wiele zbiorników może zawierać wiele gatunków (Livestock wewnątrz Tank)
 CREATE TABLE tank_livestock (
                                 id_livestock UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                                 id_tank UUID NOT NULL REFERENCES tanks(id_tank) ON DELETE CASCADE,
@@ -54,15 +52,32 @@ CREATE TABLE tank_livestock (
                                 quantity INTEGER NOT NULL CHECK (quantity > 0),
                                 health health_status_enum DEFAULT 'Good',
                                 added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Zabezpieczenie przed anomaliami
                                 UNIQUE(id_tank, id_species)
 );
 
+-- 6. TABELE DODATKOWE: LOGI PARAMETRÓW I SPRZĘT
+CREATE TABLE water_logs (
+                            id_log UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                            id_tank UUID NOT NULL REFERENCES tanks(id_tank) ON DELETE CASCADE,
+                            ph_level NUMERIC(3,1) NOT NULL,
+                            temperature NUMERIC(4,1) NOT NULL,
+                            notes TEXT,
+                            logged_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE installed_equipment (
+                                     id_equipment UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                     id_tank UUID NOT NULL REFERENCES tanks(id_tank) ON DELETE CASCADE,
+                                     name VARCHAR(100) NOT NULL,
+                                     type VARCHAR(50) NOT NULL,
+                                     status VARCHAR(50) DEFAULT 'Active',
+                                     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- =====================================================================================
--- WIDOKI (VIEWS) - Wymóg: Minimum 2 widoki z użyciem JOIN
+-- WIDOKI (VIEWS)
 -- =====================================================================================
 
--- WIDOK 1: Agregacja danych na główny Dashboard użytkownika
 CREATE VIEW v_dashboard_summary AS
 SELECT
     t.id_user,
@@ -76,7 +91,6 @@ FROM tanks t
          LEFT JOIN tank_livestock tl ON t.id_tank = tl.id_tank
 GROUP BY t.id_user, t.id_tank, t.name, t.water_type, t.volume_liters, t.status;
 
--- WIDOK 2: Szczegółowy raport inwentarza dla konkretnego zbiornika
 CREATE VIEW v_tank_ecosystem_details AS
 SELECT
     t.id_tank,
@@ -91,24 +105,18 @@ FROM tank_livestock tl
          JOIN species s ON tl.id_species = s.id_species;
 
 -- =====================================================================================
--- FUNKCJE I WYZWALACZE (TRIGGERS) - Wymóg: Minimum 1 funkcja, Minimum 1 wyzwalacz
+-- FUNKCJE I WYZWALACZE (TRIGGERS)
 -- =====================================================================================
 
--- FUNKCJA: Walidacja zgodności ekosystemu
--- Sprawdza, czy użytkownik nie próbuje dodać ryby słodkowodnej do morskiego akwarium.
 CREATE OR REPLACE FUNCTION fn_validate_water_compatibility()
 RETURNS TRIGGER AS $$
 DECLARE
 v_tank_water_type water_type_enum;
     v_species_water_type water_type_enum;
 BEGIN
-    -- Pobierz typ wody zbiornika
 SELECT water_type INTO v_tank_water_type FROM tanks WHERE id_tank = NEW.id_tank;
-
--- Pobierz kompatybilność gatunku
 SELECT water_compatibility INTO v_species_water_type FROM species WHERE id_species = NEW.id_species;
 
--- Wykonaj walidację biznesową
 IF v_tank_water_type != v_species_water_type THEN
         RAISE EXCEPTION 'Niezgodność ekosystemu: Próba dodania gatunku % do zbiornika %!', v_species_water_type, v_tank_water_type;
 END IF;
@@ -117,41 +125,17 @@ RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- WYZWALACZ: Automatyczne odpalenie walidacji przed każdym INSERT/UPDATE na tabeli inwentarza
 CREATE TRIGGER trg_check_livestock_compatibility
     BEFORE INSERT OR UPDATE ON tank_livestock
                          FOR EACH ROW
                          EXECUTE FUNCTION fn_validate_water_compatibility();
 
 -- =====================================================================================
--- DANE TESTOWE (Aby aplikacja nie była pusta na prezentacji)
+-- DANE TESTOWE
 -- =====================================================================================
-INSERT INTO species (common_name, scientific_name, water_compatibility, ideal_ph_min, ideal_ph_max, ideal_temp_min, ideal_temp_max)
+INSERT INTO species (common_name, scientific_name, water_compatibility, ideal_ph_min, ideal_ph_max, ideal_temp_min, ideal_temp_max, image_path)
 VALUES
-    ('Neon Tetra', 'Paracheirodon innesi', 'Freshwater', 6.0, 7.0, 21.0, 27.0),
-    ('Ocellaris Clownfish', 'Amphiprion ocellaris', 'Saltwater', 8.0, 8.4, 23.0, 28.0),
-    ('Yellow Tang', 'Zebrasoma flavescens', 'Saltwater', 8.1, 8.4, 24.0, 28.0);
-
--- =====================================================================================
--- TABELE DODATKOWE: LOGI PARAMETRÓW I SPRZĘT
--- =====================================================================================
-
--- Tabela dla logów parametrów wody
-CREATE TABLE water_logs (
-                            id_log UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                            id_tank UUID NOT NULL REFERENCES tanks(id_tank) ON DELETE CASCADE,
-                            ph_level NUMERIC(3,1) NOT NULL,
-                            temperature NUMERIC(4,1) NOT NULL,
-                            notes TEXT,
-                            logged_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Tabela dla zainstalowanego sprzętu
-CREATE TABLE installed_equipment (
-                                     id_equipment UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                                     id_tank UUID NOT NULL REFERENCES tanks(id_tank) ON DELETE CASCADE,
-                                     name VARCHAR(100) NOT NULL,
-                                     type VARCHAR(50) NOT NULL,
-                                     status VARCHAR(50) DEFAULT 'Active',
-                                     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+    ('Neon Tetra', 'Paracheirodon innesi', 'Freshwater', 6.0, 7.0, 21.0, 27.0, '/public/img/catalog/placeholder.png'),
+    ('Fancy Guppy', 'Poecilia reticulata', 'Freshwater', 6.8, 7.8, 22.0, 28.0, '/public/img/catalog/placeholder.png'),
+    ('Ocellaris Clownfish', 'Amphiprion ocellaris', 'Saltwater', 8.0, 8.4, 23.0, 28.0, '/public/img/catalog/placeholder.png'),
+    ('Coral Beauty Angelfish', 'Centropyge bispinosa', 'Saltwater', 8.1, 8.4, 24.0, 28.0, '/public/img/catalog/placeholder.png');
