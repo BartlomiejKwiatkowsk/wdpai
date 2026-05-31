@@ -102,10 +102,10 @@ class TankRepository extends Repository {
         );
     }
 
-    public function updateTank(string $id, string $name, string $waterType, int $volume, string $userEmail): void {
+    public function updateTank(string $id, string $name, string $waterType, int $volume, string $userEmail, string $imagePath): void {
         $stmt = $this->database->connect()->prepare('
             UPDATE public.tanks 
-            SET name = :name, water_type = :water_type, volume_liters = :volume
+            SET name = :name, water_type = :water_type, volume_liters = :volume, image_path = :image_path
             WHERE id_tank = :id AND id_user = (SELECT id_user FROM public.users WHERE email = :email)
         ');
 
@@ -113,6 +113,7 @@ class TankRepository extends Repository {
             ':name' => $name,
             ':water_type' => $waterType,
             ':volume' => $volume,
+            ':image_path' => $imagePath,
             ':id' => $id,
             ':email' => $userEmail
         ]);

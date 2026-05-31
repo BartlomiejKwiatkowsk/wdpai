@@ -30,7 +30,7 @@
   </div>
 
   <div class="form-card">
-    <form action="/editTank?id=<?= $tank->getId(); ?>" method="POST">
+    <form action="/editTank?id=<?= $tank->getId(); ?>" method="POST" enctype="multipart/form-data">
       <h3 class="section-title">General Information</h3>
 
       <div class="form-group">
@@ -47,6 +47,25 @@
           </select>
         </div>
       </div>
+
+      <h3 class="section-title" style="margin-top: 20px;">Specifications</h3>
+      <div class="form-group">
+        <label class="form-label">Volume (Liters)</label>
+        <input type="number" name="volume_liters" class="form-control" value="<?= htmlspecialchars($tank->getVolume()); ?>" required>
+      </div>
+
+      <h3 class="section-title" style="margin-top: 20px;">Media</h3>
+      <div class="form-group">
+        <label class="form-label">Update Aquarium Image (Leave empty to keep current image)</label>
+        <input type="file" name="tank_image" class="form-control" accept="image/png, image/jpeg">
+      </div>
+
+      <div class="form-actions" style="margin-top: 30px;">
+        <a href="/tank_details?id=<?= $tank->getId(); ?>" class="btn-cancel" style="text-decoration: none;">Cancel</a>
+        <button type="submit" class="btn-submit">✓ Update Tank</button>
+      </div>
+    </form>
+  </div>
 
       <h3 class="section-title" style="margin-top: 20px;">Specifications</h3>
       <div class="form-group">
