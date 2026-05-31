@@ -13,7 +13,7 @@
   <div class="brand"><img src="/public/img/logo.png" alt="Logo"><span>AquaManager</span></div>
   <ul class="nav-links">
     <li><a href="/dashboard">My Tanks</a></li>
-    <li><a href="/catalog">Species Catalog</a></li>
+    <li><a href="/catalog" class="active">Species Catalog</a></li>
     <li><a href="/addTank">Add New Tank</a></li>
     <?php if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
     <li><a href="/users" style="color: var(--danger); font-weight: bold;">Users Management</a></li>
@@ -40,7 +40,10 @@
       <h1 style="font-size: 28px;">Biological Database</h1>
       <p style="color: var(--text-muted);">Browse and add verified species to your ecosystems.</p>
     </div>
+
+    <?php if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
     <button class="btn-primary" id="openNewSpeciesModal">+ Add New Species</button>
+    <?php endif; ?>
   </div>
 
   <div class="catalog-grid">
@@ -60,9 +63,27 @@
           <span>🌡️ <?= htmlspecialchars($species->getTempMin()) ?> - <?= htmlspecialchars($species->getTempMax()) ?>°C</span>
         </div>
 
-        <button class="btn-secondary btn-full open-add-modal" data-id="<?= $species->getId() ?>" data-name="<?= htmlspecialchars($species->getCommonName()) ?>">
+        <button class="btn-primary btn-full open-add-modal" data-id="<?= $species->getId() ?>" data-name="<?= htmlspecialchars($species->getCommonName()) ?>">
           ⊕ Add to Tank
         </button>
+
+        <?php if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="btn-secondary open-edit-modal" style="flex: 1;"
+                  data-id="<?= $species->getId() ?>"
+                  data-common="<?= htmlspecialchars($species->getCommonName()) ?>"
+                  data-scientific="<?= htmlspecialchars($species->getScientificName()) ?>"
+                  data-water="<?= $species->getWaterType() ?>"
+                  data-phmin="<?= $species->getPhMin() ?>"
+                  data-phmax="<?= $species->getPhMax() ?>"
+                  data-tempmin="<?= $species->getTempMin() ?>"
+                  data-tempmax="<?= $species->getTempMax() ?>">✎ Edit</button>
+          <form action="/deleteSpecies" method="POST" style="margin: 0; flex: 1;" onsubmit="return confirm('Próba trwałego usunięcia gatunku z bazy danych. Kontynuować?');">
+            <input type="hidden" name="species_id" value="<?= $species->getId() ?>">
+            <button type="submit" class="btn-secondary" style="width: 100%; border-color: var(--danger); color: var(--danger);">🗑️ Delete</button>
+          </form>
+        </div>
+        <?php endif; ?>
       </div>
     </div>
     <?php endforeach; ?>
@@ -79,7 +100,6 @@
       </div>
       <form action="/addSpeciesToTank" method="POST">
         <input type="hidden" name="species_id" id="hiddenSpeciesId" value="">
-
         <div class="form-group">
           <label class="form-label">Select Destination Tank</label>
           <select name="tank_id" class="form-control" required>
@@ -92,117 +112,101 @@
             <?php endif; ?>
           </select>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">Quantity</label>
-          <input type="number" name="quantity" class="form-control" value="1" min="1" required>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn-submit" style="width: 100%;">Confirm Addition</button>
-        </div>
+        <div class="form-group"><label class="form-label">Quantity</label><input type="number" name="quantity" class="form-control" value="1" min="1" required></div>
+        <div class="form-actions"><button type="submit" class="btn-submit" style="width: 100%;">Confirm Addition</button></div>
       </form>
     </div>
   </div>
 
   <div class="modal-overlay" id="newSpeciesModal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Add New Species to Catalog</h3>
-        <button class="close-modal" id="closeNewSpeciesModal">&times;</button>
-      </div>
+      <div class="modal-header"><h3 class="modal-title">Add New Species</h3><button class="close-modal" id="closeNewSpeciesModal">&times;</button></div>
       <form action="/createNewSpecies" method="POST" ENCTYPE="multipart/form-data">
-
-        <div class="form-group">
-          <label class="form-label">Common Name</label>
-          <input type="text" name="common_name" class="form-control" required>
+        <div class="form-group"><label class="form-label">Common Name</label><input type="text" name="common_name" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Scientific Name</label><input type="text" name="scientific_name" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Water Type</label>
+          <select name="water_type" class="form-control" required><option value="Freshwater">Freshwater</option><option value="Saltwater">Saltwater</option></select>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">Scientific Name</label>
-          <input type="text" name="scientific_name" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Water Compatibility</label>
-          <select name="water_type" class="form-control" required>
-            <option value="Freshwater">Freshwater</option>
-            <option value="Saltwater">Saltwater</option>
-          </select>
-        </div>
-
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Min pH</label>
-            <input type="number" step="0.1" name="ph_min" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Max pH</label>
-            <input type="number" step="0.1" name="ph_max" class="form-control" required>
-          </div>
+          <div class="form-group"><label class="form-label">Min pH</label><input type="number" step="0.1" name="ph_min" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">Max pH</label><input type="number" step="0.1" name="ph_max" class="form-control" required></div>
         </div>
-
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Min Temp (°C)</label>
-            <input type="number" step="0.1" name="temp_min" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Max Temp (°C)</label>
-            <input type="number" step="0.1" name="temp_max" class="form-control" required>
-          </div>
+          <div class="form-group"><label class="form-label">Min Temp (°C)</label><input type="number" step="0.1" name="temp_min" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">Max Temp (°C)</label><input type="number" step="0.1" name="temp_max" class="form-control" required></div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">Species Image (PNG, JPG)</label>
-          <input type="file" name="file" class="form-control" accept="image/png, image/jpeg" required>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn-submit" style="width: 100%;">Upload & Save</button>
-        </div>
+        <div class="form-group"><label class="form-label">Species Image (PNG, JPG)</label><input type="file" name="file" class="form-control" accept="image/png, image/jpeg" required></div>
+        <div class="form-actions"><button type="submit" class="btn-submit" style="width: 100%;">Upload & Save</button></div>
       </form>
     </div>
   </div>
+
+  <div class="modal-overlay" id="editSpeciesModal">
+    <div class="modal-content">
+      <div class="modal-header"><h3 class="modal-title">Edit Species</h3><button class="close-modal" id="closeEditSpeciesModal">&times;</button></div>
+      <form action="/editSpecies" method="POST" ENCTYPE="multipart/form-data">
+        <input type="hidden" name="species_id" id="edit_id" value="">
+        <div class="form-group"><label class="form-label">Common Name</label><input type="text" name="common_name" id="edit_common" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Scientific Name</label><input type="text" name="scientific_name" id="edit_scientific" class="form-control" required></div>
+        <div class="form-group"><label class="form-label">Water Type</label>
+          <select name="water_type" id="edit_water" class="form-control" required><option value="Freshwater">Freshwater</option><option value="Saltwater">Saltwater</option></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Min pH</label><input type="number" step="0.1" name="ph_min" id="edit_phmin" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">Max pH</label><input type="number" step="0.1" name="ph_max" id="edit_phmax" class="form-control" required></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Min Temp (°C)</label><input type="number" step="0.1" name="temp_min" id="edit_tempmin" class="form-control" required></div>
+          <div class="form-group"><label class="form-label">Max Temp (°C)</label><input type="number" step="0.1" name="temp_max" id="edit_tempmax" class="form-control" required></div>
+        </div>
+        <div class="form-group"><label class="form-label">Update Image (Leave empty to keep current)</label><input type="file" name="file" class="form-control" accept="image/png, image/jpeg"></div>
+        <div class="form-actions"><button type="submit" class="btn-submit" style="width: 100%;">Save Changes</button></div>
+      </form>
+    </div>
+  </div>
+
 </main>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // --- Add to Tank Modal ---
-    const addModal = document.getElementById('addSpeciesModal');
-    const closeAddBtn = document.getElementById('closeAddSpeciesModal');
-    const openAddBtns = document.querySelectorAll('.open-add-modal');
-    const hiddenInput = document.getElementById('hiddenSpeciesId');
-    const nameDisplay = document.getElementById('modalSpeciesName');
+    const initModal = (modalId, closeBtnId, openBtnsSelector) => {
+      const modal = document.getElementById(modalId);
+      const closeBtn = document.getElementById(closeBtnId);
+      const openBtns = document.querySelectorAll(openBtnsSelector);
 
-    openAddBtns.forEach(btn => {
+      if(!modal) return;
+
+      openBtns.forEach(btn => btn.addEventListener('click', () => modal.classList.add('active')));
+      if(closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+      modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
+    };
+
+    // Obsługa Add To Tank
+    initModal('addSpeciesModal', 'closeAddSpeciesModal', '.open-add-modal');
+    document.querySelectorAll('.open-add-modal').forEach(btn => {
       btn.addEventListener('click', () => {
-        hiddenInput.value = btn.getAttribute('data-id');
-        nameDisplay.textContent = btn.getAttribute('data-name');
-        addModal.classList.add('active');
+        document.getElementById('hiddenSpeciesId').value = btn.getAttribute('data-id');
+        document.getElementById('modalSpeciesName').textContent = btn.getAttribute('data-name');
       });
     });
 
-    closeAddBtn.addEventListener('click', () => addModal.classList.remove('active'));
-    addModal.addEventListener('click', (e) => {
-      if (e.target === addModal) addModal.classList.remove('active');
-    });
+    // Obsługa New Species
+    initModal('newSpeciesModal', 'closeNewSpeciesModal', '#openNewSpeciesModal');
 
-    // --- Create New Species Modal ---
-    const newModal = document.getElementById('newSpeciesModal');
-    const openNewBtn = document.getElementById('openNewSpeciesModal');
-    const closeNewBtn = document.getElementById('closeNewSpeciesModal');
-
-    if(openNewBtn && newModal) {
-      openNewBtn.addEventListener('click', () => newModal.classList.add('active'));
-    }
-
-    if(closeNewBtn && newModal) {
-      closeNewBtn.addEventListener('click', () => newModal.classList.remove('active'));
-      newModal.addEventListener('click', (e) => {
-        if (e.target === newModal) newModal.classList.remove('active');
+    // Obsługa Edit Species (Przenoszenie danych do formularza)
+    initModal('editSpeciesModal', 'closeEditSpeciesModal', '.open-edit-modal');
+    document.querySelectorAll('.open-edit-modal').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('edit_id').value = btn.getAttribute('data-id');
+        document.getElementById('edit_common').value = btn.getAttribute('data-common');
+        document.getElementById('edit_scientific').value = btn.getAttribute('data-scientific');
+        document.getElementById('edit_water').value = btn.getAttribute('data-water');
+        document.getElementById('edit_phmin').value = btn.getAttribute('data-phmin');
+        document.getElementById('edit_phmax').value = btn.getAttribute('data-phmax');
+        document.getElementById('edit_tempmin').value = btn.getAttribute('data-tempmin');
+        document.getElementById('edit_tempmax').value = btn.getAttribute('data-tempmax');
       });
-    }
+    });
   });
 </script>
 

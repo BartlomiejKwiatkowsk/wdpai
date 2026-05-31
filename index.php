@@ -26,6 +26,8 @@ Routing::post('updateUserPassword', 'updateUserPassword');
 Routing::post('deleteUser', 'deleteUser');
 Routing::post('register', 'register');
 Routing::post('createNewSpecies', 'createNewSpecies');
+Routing::post('editSpecies', 'editSpecies');
+Routing::post('deleteSpecies', 'deleteSpecies');
 Routing::post('deleteItem', 'deleteItem');
 Routing::post('deleteTank', 'deleteTank');
 

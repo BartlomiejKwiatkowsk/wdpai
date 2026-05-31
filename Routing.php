@@ -36,7 +36,7 @@ class Routing {
         } elseif ($controllerName === 'addTank' || $controllerName === 'tankDetails' || $controllerName === 'editTank' || $controllerName === 'addLog' || $controllerName === 'addEquipment' || $controllerName === 'addLivestock' || $controllerName === 'deleteItem' || $controllerName === 'deleteTank') {
             require_once 'src/controllers/TankController.php';
             $object = new TankController();
-        } elseif ($controllerName === 'speciesCatalog' || $controllerName === 'addSpeciesToTankAction' || $controllerName === 'createNewSpecies') {
+        } elseif ($controllerName === 'speciesCatalog' || $controllerName === 'addSpeciesToTankAction' || $controllerName === 'createNewSpecies' || $controllerName === 'editSpecies' || $controllerName === 'deleteSpecies') {
             require_once 'src/controllers/SpeciesController.php';
             $object = new SpeciesController();
         } elseif ($controllerName === 'usersPanel' || $controllerName === 'updateUserRole' || $controllerName === 'updateUserPassword' || $controllerName === 'deleteUser') {

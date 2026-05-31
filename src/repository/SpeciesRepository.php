@@ -14,18 +14,27 @@ class SpeciesRepository extends Repository {
 
         foreach ($speciesData as $species) {
             $result[] = new Species(
-                $species['id_species'],
-                $species['common_name'],
-                $species['scientific_name'],
-                $species['water_compatibility'],
-                $species['ideal_ph_min'],
-                $species['ideal_ph_max'],
-                $species['ideal_temp_min'],
-                $species['ideal_temp_max'],
-                $species['image_path']
+                $species['id_species'], $species['common_name'], $species['scientific_name'],
+                $species['water_compatibility'], $species['ideal_ph_min'], $species['ideal_ph_max'],
+                $species['ideal_temp_min'], $species['ideal_temp_max'], $species['image_path']
             );
         }
         return $result;
+    }
+
+    public function getSpeciesById(string $id): ?Species {
+        $stmt = $this->database->connect()->prepare('SELECT * FROM public.species WHERE id_species = :id');
+        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+        $stmt->execute();
+        $species = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$species) return null;
+
+        return new Species(
+            $species['id_species'], $species['common_name'], $species['scientific_name'],
+            $species['water_compatibility'], $species['ideal_ph_min'], $species['ideal_ph_max'],
+            $species['ideal_temp_min'], $species['ideal_temp_max'], $species['image_path']
+        );
     }
 
     public function addSpeciesToTank(string $tankId, string $speciesId, int $quantity, string $health): void {
@@ -35,28 +44,36 @@ class SpeciesRepository extends Repository {
             ON CONFLICT (id_tank, id_species) 
             DO UPDATE SET quantity = public.tank_livestock.quantity + EXCLUDED.quantity, health = EXCLUDED.health
         ');
-
-        $stmt->execute([
-            ':tankId' => $tankId,
-            ':speciesId' => $speciesId,
-            ':quantity' => $quantity,
-            ':health' => $health
-        ]);
+        $stmt->execute([':tankId' => $tankId, ':speciesId' => $speciesId, ':quantity' => $quantity, ':health' => $health]);
     }
+
     public function addNewSpecies(Species $species): void {
         $stmt = $this->database->connect()->prepare('
             INSERT INTO public.species (common_name, scientific_name, water_compatibility, ideal_ph_min, ideal_ph_max, ideal_temp_min, ideal_temp_max, image_path)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
-            $species->getCommonName(),
-            $species->getScientificName(),
-            $species->getWaterType(),
-            $species->getPhMin(),
-            $species->getPhMax(),
-            $species->getTempMin(),
-            $species->getTempMax(),
-            $species->getImagePath()
+            $species->getCommonName(), $species->getScientificName(), $species->getWaterType(),
+            $species->getPhMin(), $species->getPhMax(), $species->getTempMin(), $species->getTempMax(), $species->getImagePath()
         ]);
+    }
+
+    public function updateSpecies(Species $species): void {
+        $stmt = $this->database->connect()->prepare('
+            UPDATE public.species 
+            SET common_name = ?, scientific_name = ?, water_compatibility = ?, ideal_ph_min = ?, ideal_ph_max = ?, ideal_temp_min = ?, ideal_temp_max = ?, image_path = ?
+            WHERE id_species = ?
+        ');
+        $stmt->execute([
+            $species->getCommonName(), $species->getScientificName(), $species->getWaterType(),
+            $species->getPhMin(), $species->getPhMax(), $species->getTempMin(), $species->getTempMax(),
+            $species->getImagePath(), $species->getId()
+        ]);
+    }
+
+    public function deleteSpecies(string $id): void {
+        $stmt = $this->database->connect()->prepare('DELETE FROM public.species WHERE id_species = :id');
+        $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+        $stmt->execute();
     }
 }
