@@ -57,7 +57,12 @@ class TankController extends AppController {
         $tankRepository = new TankRepository();
         $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
 
-        if (!$tank) die("Błąd 404/403: Brak uprawnień do tego zbiornika.");
+        if (!$tank) {
+            require_once 'ErrorController.php';
+            $error = new ErrorController();
+            $error->error403("Brak uprawnień do przeglądania tego zbiornika.");
+            exit();
+        }
 
         $latestLog = $tankRepository->getLatestLog($tankId);
         $equipment = $tankRepository->getEquipmentForTank($tankId);

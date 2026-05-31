@@ -1,6 +1,7 @@
 <?php
 
 require_once 'src/controllers/DefaultController.php';
+require_once 'src/controllers/ErrorController.php';
 
 class Routing {
     public static $routes;
@@ -19,12 +20,8 @@ class Routing {
         }
 
         if (!array_key_exists($url, self::$routes)) {
-            $templatePath = 'public/views/404.html';
-            if(file_exists($templatePath)){
-                include($templatePath);
-            } else {
-                echo "Strona nie istnieje! (404)";
-            }
+            $errorController = new ErrorController();
+            $errorController->error404();
             return;
         }
 
@@ -50,7 +47,8 @@ class Routing {
         if(method_exists($object, $controllerName)){
             $object->$controllerName();
         } else {
-            echo "Akcja $controllerName nie została zaimplementowana w przypisanym kontrolerze!";
+            $errorController = new ErrorController();
+            $errorController->error500("Akcja $controllerName nie została zaimplementowana w kontrolerze.");
         }
     }
 }

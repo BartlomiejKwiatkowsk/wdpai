@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/login.css">
+    <title>Error <?= $errorCode ?? 'Error' ?> - AquaManager</title>
+</head>
+<body class="login-view">
+<div class="login-container" style="max-width: 600px; border-color: rgba(255, 77, 77, 0.3);">
+    <img src="/public/img/logo.png" alt="AquaLogo" class="logo-icon" style="width: 80px; margin-bottom: 10px; filter: grayscale(100%) sepia(100%) hue-rotate(300deg) saturate(300%) drop-shadow(0 0 10px rgba(211,47,47,0.5));">
+
+    <h1 style="font-size: 80px; margin-bottom: 5px; color: #ff4d4d; text-shadow: 0 4px 10px rgba(0,0,0,0.3);"><?= $errorCode ?? 'Error' ?></h1>
+    <h2 style="font-size: 24px; margin-bottom: 25px; text-transform: uppercase; color: #ffffff; letter-spacing: 2px;">
+        <?= $errorMessage ?? 'Unknown Error' ?>
+    </h2>
+
+    <p style="color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 40px; line-height: 1.6;">
+        <?= $errorDescription ?? 'Wystąpił nieoczekiwany błąd aplikacji.' ?>
+    </p>
+
+    <a href="/dashboard" class="login-btn" style="display: block; text-decoration: none; text-align: center; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">Powrót do strony głównej</a>
+</div>
+</body>
+</html>

@@ -153,8 +153,10 @@ class SpeciesController extends AppController {
 
     private function enforceAdmin() {
         if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-            http_response_code(403);
-            die("Błąd 403: Brak uprawnień. Tylko administrator ma dostęp do tej operacji.");
+            require_once 'ErrorController.php';
+            $error = new ErrorController();
+            $error->error403("Odmowa dostępu. Tylko administrator ma dostęp do tej operacji.");
+            exit();
         }
     }
 
