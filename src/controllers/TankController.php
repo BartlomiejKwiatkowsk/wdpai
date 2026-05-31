@@ -132,7 +132,7 @@ class TankController extends AppController {
             $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
 
             if ($tank) {
-                $tankRepository->addWaterLog($tankId, $phLevel, $temperature, $_POST['log_notes']);
+                $tankRepository->addWaterLog($tankId, $phLevel, $temperature, null);
             }
             header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
             exit();

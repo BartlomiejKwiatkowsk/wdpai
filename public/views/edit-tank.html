@@ -72,18 +72,7 @@
     </form>
   </div>
 
-      <h3 class="section-title" style="margin-top: 20px;">Specifications</h3>
-      <div class="form-group">
-        <label class="form-label">Volume (Liters)</label>
-        <input type="number" name="volume_liters" class="form-control" value="<?= htmlspecialchars($tank->getVolume()); ?>" required>
-      </div>
 
-      <div class="form-actions">
-        <a href="/tank_details?id=<?= $tank->getId(); ?>" class="btn-cancel" style="text-decoration: none;">Cancel</a>
-        <button type="submit" class="btn-submit">✓ Update Tank</button>
-      </div>
-    </form>
-  </div>
 </main>
 </body>
 </html>

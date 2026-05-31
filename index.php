@@ -17,7 +17,11 @@ Routing::get('addEquipment', 'addEquipment');
 Routing::get('addLivestock', 'addLivestock');
 Routing::get('catalog', 'speciesCatalog');
 Routing::get('addSpeciesToTank', 'addSpeciesToTankAction');
+Routing::get('register', 'register');
 
+
+
+Routing::post('register', 'register');
 Routing::post('createNewSpecies', 'createNewSpecies');
 Routing::post('deleteItem', 'deleteItem');
 Routing::post('deleteTank', 'deleteTank');

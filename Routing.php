@@ -30,7 +30,7 @@ class Routing {
 
         $controllerName = self::$routes[$url];
 
-        if ($controllerName === 'login' || $controllerName === 'logout') {
+        if ($controllerName === 'login' || $controllerName === 'logout' || $controllerName === 'register') {
             require_once 'src/controllers/SecurityController.php';
             $object = new SecurityController();
         } elseif ($controllerName === 'addTank' || $controllerName === 'tankDetails' || $controllerName === 'editTank' || $controllerName === 'addLog' || $controllerName === 'addEquipment' || $controllerName === 'addLivestock' || $controllerName === 'deleteItem' || $controllerName === 'deleteTank') {

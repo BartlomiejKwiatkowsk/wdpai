@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/login.css">
+    <title>AquaManager - Register</title>
+</head>
+<body class="login-view">
+<div class="login-container" style="max-width: 450px;">
+    <img src="/public/img/logo.png" alt="AquaLogo" class="logo-icon" style="width: 50px; margin-bottom: 10px;">
+    <h1 style="font-size: 22px; margin-bottom: 25px;">Create Account</h1>
+
+    <div class="messages">
+        <?php if(isset($messages)){ foreach($messages as $message) { echo $message; } } ?>
+    </div>
+
+    <form action="/register" method="POST">
+        <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="email@example.com" required>
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+        </div>
+        <div class="input-group">
+            <label>Confirm Password</label>
+            <input type="password" name="confirmedPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="login-btn">Register</button>
+    </form>
+
+    <div class="footer-links" style="justify-content: center; margin-top: 25px;">
+        <span style="color: rgba(255,255,255,0.5); margin-right: 10px;">Already have an account?</span>
+        <a href="/login" style="color: var(--primary); font-weight: bold;">Log In</a>
+    </div>
+</div>
+</body>
+</html>

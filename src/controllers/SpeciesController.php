@@ -69,8 +69,13 @@ class SpeciesController extends AppController {
     public function createNewSpecies() {
         session_start();
         if (!isset($_SESSION['user_email'])) {
-            header("Location: /login");
+            header("Location: http://$_SERVER[HTTP_HOST]/login");
             exit();
+        }
+
+        if ($_SESSION['user_role'] !== 'admin') {
+            http_response_code(403);
+            die("Błąd 403: Brak uprawnień. Tylko administrator może modyfikować katalog gatunków.");
         }
 
         if ($this->isPost() && is_uploaded_file($_FILES['file']['tmp_name']) && $this->validate($_FILES['file'])) {

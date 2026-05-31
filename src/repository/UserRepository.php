@@ -14,16 +14,27 @@ class UserRepository extends Repository {
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
         if ($user == false) {
             return null;
         }
-
 
         return new User(
             $user['email'],
             $user['password_hash'],
             $user['role']
         );
+    }
+
+    public function addUser(User $user): void {
+        $stmt = $this->database->connect()->prepare('
+            INSERT INTO public.users (email, password_hash, role)
+            VALUES (?, ?, ?)
+        ');
+
+        $stmt->execute([
+            $user->getEmail(),
+            $user->getPassword(),
+            $user->getRole()
+        ]);
     }
 }
