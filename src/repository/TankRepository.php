@@ -248,4 +248,11 @@ class TankRepository extends Repository {
         $stmt->bindParam(':id', $id, PDO::PARAM_STR);
         return $stmt->execute();
     }
+    public function deleteTank(string $tankId): void {
+        $stmt = $this->database->connect()->prepare('
+            DELETE FROM public.tanks WHERE id_tank = :id
+        ');
+        $stmt->bindParam(':id', $tankId, PDO::PARAM_STR);
+        $stmt->execute();
+    }
 }

@@ -30,9 +30,14 @@
       <h1 style="font-size: 28px;"><?= isset($tank) ? htmlspecialchars($tank->getName()) : 'Main Reef Tank'; ?></h1>
       <p style="color: var(--text-muted);"><?= isset($tank) ? htmlspecialchars($tank->getWaterType()) : 'Saltwater Mixed Reef'; ?> • Established 2026</p>
     </div>
-    <div class="details-header-actions">
+    <div class="details-header-actions" style="display: flex; gap: 10px; align-items: center;">
       <a href="/editTank?id=<?= $tank->getId(); ?>" class="btn-secondary" style="text-decoration: none;">✎ Edit Details</a>
       <button class="btn-primary" id="openLogModal">+ Add Log Entry</button>
+
+      <form action="/deleteTank" method="POST" onsubmit="return confirm('Are you sure about deleting this tank? This change is permanent and will remove all associated data.');" style="margin: 0;">
+        <input type="hidden" name="tank_id" value="<?= $tank->getId(); ?>">
+        <button type="submit" class="btn-submit" style="background-color: var(--danger); border-color: var(--danger);">🗑️ Delete Tank</button>
+      </form>
     </div>
   </div>
 

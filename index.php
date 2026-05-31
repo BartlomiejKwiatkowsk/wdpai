@@ -17,7 +17,9 @@ Routing::get('addEquipment', 'addEquipment');
 Routing::get('addLivestock', 'addLivestock');
 Routing::get('catalog', 'speciesCatalog');
 Routing::get('addSpeciesToTank', 'addSpeciesToTankAction');
+
 Routing::post('createNewSpecies', 'createNewSpecies');
 Routing::post('deleteItem', 'deleteItem');
+Routing::post('deleteTank', 'deleteTank');
 
 Routing::run($path);

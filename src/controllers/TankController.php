@@ -253,4 +253,40 @@ class TankController extends AppController {
         echo json_encode(['status' => 'error']);
         exit();
     }
+    public function deleteTank() {
+        session_start();
+        if (!isset($_SESSION['user_email'])) {
+            header("Location: http://$_SERVER[HTTP_HOST]/login");
+            exit();
+        }
+
+        if ($this->isPost()) {
+            $tankId = $_POST['tank_id'] ?? null;
+
+            if ($tankId) {
+                $tankRepository = new TankRepository();
+                // Ensure the tank belongs to the logged-in user before deleting
+                $tank = $tankRepository->getTankById($tankId, $_SESSION['user_email']);
+
+                if ($tank) {
+                    try {
+                        $tankRepository->deleteTank($tankId);
+                        header("Location: http://$_SERVER[HTTP_HOST]/dashboard");
+                        exit();
+                    } catch (Exception $e) {
+                        $_SESSION['error_message'] = "Failed to delete tank: " . $e->getMessage();
+                        header("Location: http://$_SERVER[HTTP_HOST]/tank_details?id=" . $tankId);
+                        exit();
+                    }
+                } else {
+                    $_SESSION['error_message'] = "Unauthorized or tank not found.";
+                    header("Location: http://$_SERVER[HTTP_HOST]/dashboard");
+                    exit();
+                }
+            }
+        }
+        // Fallback redirect
+        header("Location: http://$_SERVER[HTTP_HOST]/dashboard");
+        exit();
+    }
 }
