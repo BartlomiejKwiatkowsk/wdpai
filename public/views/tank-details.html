@@ -48,6 +48,18 @@
   }
   ?>
 
+  <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+    <div style="flex: 0 0 320px;">
+      <img src="<?= htmlspecialchars($tank->getImagePath() ?? '/public/img/tanks/default-tank.png'); ?>" alt="Aquarium Photo" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    </div>
+    <div style="flex: 1; background: #fff; padding: 25px; border-radius: 8px; border: 1px solid var(--border-color);">
+      <h3 style="margin-top: 0; color: var(--primary); font-size: 18px;">Aquarium Notes & Details</h3>
+      <p style="color: var(--text-muted); line-height: 1.6; margin-top: 15px;">
+        <?= $tank->getNotes() ? nl2br(htmlspecialchars($tank->getNotes())) : 'No additional notes provided for this setup.'; ?>
+      </p>
+    </div>
+  </div>
+
   <div class="params-grid">
     <div class="param-card">
       <div class="param-icon">💧</div>
