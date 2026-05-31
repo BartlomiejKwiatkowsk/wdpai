@@ -7,23 +7,23 @@ class Tank {
     private $volume;
     private $status;
     private $livestockCount;
+    private $imagePath;
 
-    public function __construct($id, $name, $waterType, $volume, $status, $livestockCount = 0) {
+    public function __construct($id, $name, $waterType, $volume, $status, $livestockCount = 0, $imagePath = '/public/img/tanks/default-tank.png') {
         $this->id = $id;
         $this->name = $name;
         $this->waterType = $waterType;
         $this->volume = $volume;
         $this->status = $status;
         $this->livestockCount = $livestockCount;
+        $this->imagePath = $imagePath;
     }
 
-    // Gettery do wyświetlania w widoku
     public function getId() { return $this->id; }
     public function getName() { return $this->name; }
     public function getWaterType() { return $this->waterType; }
     public function getVolume() { return $this->volume; }
     public function getStatus() { return $this->status; }
     public function getLivestockCount() { return $this->livestockCount; }
+    public function getImagePath() { return $this->imagePath; }
 }
-
-

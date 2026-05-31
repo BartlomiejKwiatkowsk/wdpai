@@ -42,7 +42,7 @@
   </div>
 
   <div class="form-card">
-    <form action="/addTank" method="POST">
+    <form action="/addTank" method="POST" enctype="multipart/form-data">
 
       <h3 class="section-title">General Information</h3>
       <p class="section-desc">Basic identification for your aquarium.</p>
@@ -90,8 +90,13 @@
         <textarea name="notes" class="form-control" placeholder="Additional details about equipment, substrate, etc."></textarea>
       </div>
 
+      <div class="form-group" style="margin-top: 20px;">
+        <label class="form-label">Aquarium Image (Optional, PNG/JPEG)</label>
+        <input type="file" name="tank_image" class="form-control" accept="image/png, image/jpeg">
+      </div>
+
       <div class="form-actions">
-        <a href="/dashboard" class="btn-cancel">Cancel</a>
+        <a href="/dashboard" class="btn-cancel" style="text-decoration: none;">Cancel</a>
         <button type="submit" class="btn-submit">✓ Save Tank</button>
       </div>
 

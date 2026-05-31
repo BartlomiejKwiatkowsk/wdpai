@@ -30,7 +30,8 @@ class TankRepository extends Repository {
                 $tank['water_type'],
                 $tank['volume_liters'],
                 $tank['status'],
-                $tank['total_livestock_count']
+                $tank['total_livestock_count'],
+                $tank['image_path'] ?? '/public/img/tanks/default-tank.png'
             );
         }
 
@@ -39,7 +40,6 @@ class TankRepository extends Repository {
 
     public function addTank(Tank $tank, string $userEmail): void {
         $conn = $this->database->connect();
-
         $conn->exec("SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED");
         $conn->beginTransaction();
 
@@ -50,12 +50,12 @@ class TankRepository extends Repository {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$user) {
-                throw new Exception("Błąd autoryzacji: Użytkownik nie istnieje.");
+                throw new Exception("Authorization error: User does not exist.");
             }
 
             $stmt = $conn->prepare('
-                INSERT INTO public.tanks (id_user, name, water_type, volume_liters, status)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO public.tanks (id_user, name, water_type, volume_liters, status, image_path)
+                VALUES (?, ?, ?, ?, ?, ?)
             ');
 
             $stmt->execute([
@@ -63,7 +63,8 @@ class TankRepository extends Repository {
                 $tank->getName(),
                 $tank->getWaterType(),
                 $tank->getVolume(),
-                $tank->getStatus()
+                $tank->getStatus(),
+                $tank->getImagePath()
             ]);
 
             $conn->commit();

@@ -16,12 +16,27 @@ class TankController extends AppController {
         }
 
         if ($this->isPost()) {
+
+            $dbImagePath = '/public/img/tanks/default-tank.png';
+
+            if (isset($_FILES['tank_image']) && is_uploaded_file($_FILES['tank_image']['tmp_name'])) {
+                $fileExtension = pathinfo($_FILES['tank_image']['name'], PATHINFO_EXTENSION);
+                $uniqueFilename = uniqid('tank_') . '.' . $fileExtension;
+                $uploadPath = dirname(__DIR__) . '/../public/img/tanks/' . $uniqueFilename;
+
+                if (move_uploaded_file($_FILES['tank_image']['tmp_name'], $uploadPath)) {
+                    $dbImagePath = '/public/img/tanks/' . $uniqueFilename;
+                }
+            }
+
             $tank = new Tank(
                 null,
                 $_POST['name'],
                 $_POST['water_type'],
                 (int)$_POST['volume_liters'],
-                'Empty'
+                'Empty',
+                0,
+                $dbImagePath
             );
 
             $tankRepository = new TankRepository();
@@ -32,7 +47,7 @@ class TankController extends AppController {
                 header("Location: {$url}/dashboard");
                 exit();
             } catch (Exception $e) {
-                return $this->render('add-tank', ['messages' => ['Błąd zapisu: ' . $e->getMessage()]]);
+                return $this->render('add-tank', ['messages' => ['Save Error: ' . $e->getMessage()]]);
             }
         }
 

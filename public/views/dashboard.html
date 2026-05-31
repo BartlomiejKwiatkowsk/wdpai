@@ -42,7 +42,7 @@
         <?php if(isset($tanks) && count($tanks) > 0): ?>
         <?php foreach ($tanks as $tank): ?>
         <div class="tank-card">
-            <div class="tank-image-placeholder">
+            <div class="tank-image-placeholder" style="background-image: url('<?= htmlspecialchars($tank->getImagePath()); ?>'); background-size: cover; background-position: center; min-height: 150px; border-radius: 8px 8px 0 0;">
                 <span class="status-badge"><?= htmlspecialchars($tank->getStatus()); ?></span>
             </div>
             <div class="tank-info">
