@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/public/css/app.css">
+  <title>Admin Panel - AquaManager</title>
+</head>
+<body class="app-view">
+
+<nav class="sidebar">
+  <div class="brand"><img src="/public/img/logo.png" alt="Logo"><span>AquaManager</span></div>
+  <ul class="nav-links">
+    <li><a href="/dashboard">My Tanks</a></li>
+    <li><a href="/catalog">Species Catalog</a></li>
+    <li><a href="/addTank">Add New Tank</a></li>
+    <?php if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+    <li><a href="/users" class="active" style="color: var(--danger); font-weight: bold; background: #ffebee;">Users Management</a></li>
+    <?php endif; ?>
+  </ul>
+  <a href="/logout" class="logout-btn">Logout</a>
+</nav>
+
+<main class="main-content">
+  <header class="topbar">
+    <h2 class="page-title">Users Management (Admin)</h2>
+    <div class="user-profile"><span><?php echo $userEmail ?? 'Admin'; ?></span></div>
+  </header>
+
+  <div class="data-section">
+    <div class="data-header">
+      <h3>Registered Users</h3>
+    </div>
+    <table class="data-table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Registered At</th>
+        <th>Actions (Role / Password / Delete)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <?php if(isset($users)): foreach ($users as $u): ?>
+      <tr>
+        <td style="font-size: 10px; color: var(--text-muted);"><?= substr($u['id_user'], 0, 8); ?>...</td>
+        <td><strong><?= htmlspecialchars($u['email']); ?></strong></td>
+        <td>
+            <span class="status-badge" style="position:static; background: <?= $u['role'] === 'admin' ? 'var(--danger)' : 'var(--primary)'; ?>">
+              <?= strtoupper(htmlspecialchars($u['role'])); ?>
+            </span>
+        </td>
+        <td><?= substr($u['created_at'], 0, 10); ?></td>
+        <td style="display: flex; gap: 10px;">
+          <form action="/updateUserRole" method="POST" style="margin: 0; display: flex; gap: 5px;">
+            <input type="hidden" name="user_id" value="<?= $u['id_user']; ?>">
+            <select name="new_role" class="form-control" style="padding: 5px; height: 30px; font-size: 11px; width: 100px;">
+              <option value="user" <?= $u['role'] === 'user' ? 'selected' : ''; ?>>USER</option>
+              <option value="admin" <?= $u['role'] === 'admin' ? 'selected' : ''; ?>>ADMIN</option>
+            </select>
+            <button type="submit" class="btn-primary" style="padding: 5px 10px; font-size: 11px;">Update</button>
+          </form>
+
+          <form action="/updateUserPassword" method="POST" style="margin: 0; display: flex; gap: 5px;" onsubmit="return confirm('Wymusić zmianę hasła dla tego użytkownika?');">
+            <input type="hidden" name="user_id" value="<?= $u['id_user']; ?>">
+            <input type="text" name="new_password" placeholder="New Password" class="form-control" style="padding: 5px; height: 30px; font-size: 11px; width: 120px;" required>
+            <button type="submit" class="btn-primary" style="padding: 5px 10px; font-size: 11px; background: #ff9800;">Set Pass</button>
+          </form>
+
+          <form action="/deleteUser" method="POST" style="margin: 0;" onsubmit="return confirm('PERMANENTNIE usunąć konto i wszystkie akwaria z nim powiązane?');">
+            <input type="hidden" name="user_id" value="<?= $u['id_user']; ?>">
+            <button type="submit" class="btn-primary" style="padding: 5px 10px; font-size: 11px; background: var(--danger); border-color: var(--danger);">Delete</button>
+          </form>
+        </td>
+      </tr>
+      <?php endforeach; endif; ?>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+</body>
+</html>

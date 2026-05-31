@@ -18,9 +18,12 @@ Routing::get('addLivestock', 'addLivestock');
 Routing::get('catalog', 'speciesCatalog');
 Routing::get('addSpeciesToTank', 'addSpeciesToTankAction');
 Routing::get('register', 'register');
+Routing::get('users', 'usersPanel');
 
 
-
+Routing::post('updateUserRole', 'updateUserRole');
+Routing::post('updateUserPassword', 'updateUserPassword');
+Routing::post('deleteUser', 'deleteUser');
 Routing::post('register', 'register');
 Routing::post('createNewSpecies', 'createNewSpecies');
 Routing::post('deleteItem', 'deleteItem');

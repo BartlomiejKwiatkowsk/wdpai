@@ -39,6 +39,9 @@ class Routing {
         } elseif ($controllerName === 'speciesCatalog' || $controllerName === 'addSpeciesToTankAction' || $controllerName === 'createNewSpecies') {
             require_once 'src/controllers/SpeciesController.php';
             $object = new SpeciesController();
+        } elseif ($controllerName === 'usersPanel' || $controllerName === 'updateUserRole' || $controllerName === 'updateUserPassword' || $controllerName === 'deleteUser') {
+            require_once 'src/controllers/AdminController.php';
+            $object = new AdminController();
         } else {
             require_once 'src/controllers/DefaultController.php';
             $object = new DefaultController();

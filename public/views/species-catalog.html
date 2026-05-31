@@ -13,8 +13,11 @@
   <div class="brand"><img src="/public/img/logo.png" alt="Logo"><span>AquaManager</span></div>
   <ul class="nav-links">
     <li><a href="/dashboard">My Tanks</a></li>
-    <li><a href="/catalog" class="active">Species Catalog</a></li>
+    <li><a href="/catalog">Species Catalog</a></li>
     <li><a href="/addTank">Add New Tank</a></li>
+    <?php if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+    <li><a href="/users" style="color: var(--danger); font-weight: bold;">Users Management</a></li>
+    <?php endif; ?>
   </ul>
   <a href="/logout" class="logout-btn">Logout</a>
 </nav>
