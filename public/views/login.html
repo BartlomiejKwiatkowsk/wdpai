@@ -17,6 +17,8 @@
     </div>
 
     <form action="/login" method="POST">
+        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? ''; ?>">
+
         <div class="input-group">
             <label>Email Address</label>
             <input type="email" name="email" placeholder="email@example.com" required>
