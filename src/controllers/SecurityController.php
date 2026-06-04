@@ -9,8 +9,22 @@ class SecurityController extends AppController {
     public function login() {
         $userRepository = new UserRepository();
 
+        // Startujemy sesję, żeby mieć gdzie zapisać token
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         if (!$this->isPost()) {
+            // Generowanie tokena CSRF przed wyrenderowaniem widoku
+            if (empty($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
             return $this->render('login');
+        }
+
+        // [B2] Weryfikacja tokena CSRF przy żądaniu POST
+        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+            return $this->render('login', ['messages' => ['Błąd bezpieczeństwa (CSRF). Spróbuj ponownie.']]);
         }
 
         $email = $_POST['email'];
@@ -18,13 +32,12 @@ class SecurityController extends AppController {
 
         $user = $userRepository->getUser($email);
 
-        // [B1] Generyczny komunikat błędu logowania
+        // [B1] Generyczny komunikat
         if (!$user || !password_verify($password, $user->getPassword())) {
             return $this->render('login', ['messages' => ['Nieprawidłowy adres e-mail lub hasło!']]);
         }
 
-        session_start();
-        // [B3] Ochrona przed atakiem Session Fixation
+        // [B3] Regeneracja ID
         session_regenerate_id(true);
 
         $_SESSION['user_email'] = $user->getEmail();
