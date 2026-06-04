@@ -308,9 +308,6 @@ Jest to realizowane dzięki relacjom:
 ON DELETE CASCADE
 ```
 ## 6. Zrzuty Ekranu Interfejsu
-
-Miejsce na dodanie zrzutów ekranu po wykonaniu ich w systemie.
-
 ### Wersja Webowa Desktop
 
 
