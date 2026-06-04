@@ -18,15 +18,15 @@ class SecurityController extends AppController {
 
         $user = $userRepository->getUser($email);
 
-        if (!$user) {
-            return $this->render('login', ['messages' => ['Nie ma takiego konta w systemie!']]);
-        }
-
-        if (!password_verify($password, $user->getPassword())) {
-            return $this->render('login', ['messages' => ['Błędne hasło!']]);
+        // [B1] Generyczny komunikat błędu logowania
+        if (!$user || !password_verify($password, $user->getPassword())) {
+            return $this->render('login', ['messages' => ['Nieprawidłowy adres e-mail lub hasło!']]);
         }
 
         session_start();
+        // [B3] Ochrona przed atakiem Session Fixation
+        session_regenerate_id(true);
+
         $_SESSION['user_email'] = $user->getEmail();
         $_SESSION['user_role'] = $user->getRole();
 
@@ -54,6 +54,16 @@ class SecurityController extends AppController {
         $password = $_POST['password'];
         $confirmedPassword = $_POST['confirmedPassword'];
 
+        // [C1] Walidacja formatu email po stronie backendu
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->render('register', ['messages' => ['Nieprawidłowy format adresu e-mail.']]);
+        }
+
+        // [B4] Minimalna długość hasła
+        if (strlen($password) < 8) {
+            return $this->render('register', ['messages' => ['Hasło musi składać się z przynajmniej 8 znaków.']]);
+        }
+
         if ($password !== $confirmedPassword) {
             return $this->render('register', ['messages' => ['Hasła nie są identyczne.']]);
         }
@@ -64,7 +74,7 @@ class SecurityController extends AppController {
             return $this->render('register', ['messages' => ['Konto z tym adresem e-mail już istnieje!']]);
         }
 
-        // Twarde przypisanie roli 'user' dla każdego nowego konta publicznego
+        // Twarde przypisanie roli 'user' dla każdego nowego konta
         $user = new User($email, password_hash($password, PASSWORD_BCRYPT), 'user');
         $userRepository->addUser($user);
 
