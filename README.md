@@ -339,9 +339,6 @@ ON DELETE CASCADE
 ![Widok User Management Mobile](public/img/docs/Mobile/UserManagment.png)
 
 ## 7. Checklista Zrealizowanych Założeń
-
-## 7. Checklista Zrealizowanych Założeń
-
 - [x] Projekt indywidualny oparty na technologiach Docker, GIT, HTML5, CSS, JS Fetch API i obiektowym PHP bez użycia gotowych frameworków.
 - [x] Zastosowanie architektury MVC rozdzielającej warstwy logiczne i widoki.
 - [x] Zrealizowane filary programowania obiektowego, zasady SOLID oraz bezwzględny brak programowania strukturalnego.
