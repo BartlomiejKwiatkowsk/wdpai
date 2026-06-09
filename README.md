@@ -340,16 +340,18 @@ ON DELETE CASCADE
 
 ## 7. Checklista Zrealizowanych Założeń
 
+## 7. Checklista Zrealizowanych Założeń
+
 - [x] Projekt indywidualny oparty na technologiach Docker, GIT, HTML5, CSS, JS Fetch API i obiektowym PHP bez użycia gotowych frameworków.
 - [x] Zastosowanie architektury MVC rozdzielającej warstwy logiczne i widoki.
-- [x] Zrealizowane filary programowania obiektowego, zasady SOLID oraz brak programowania strukturalnego.
-- [x] Aplikacja estetyczna i w 100% responsywna.
-- [x] Działające logowanie, sesje i panel rejestracji oparty o walidację danych Security Bingo.
-- [x] Autoryzacja i zróżnicowanie uprawnień użytkowników Admin / User.
-- [x] Zaawansowana relacyjna baza danych PostgreSQL posiadająca wszystkie typy relacji 1:1, 1:N, N:M.
-- [x] Spełniona 3 Postać Normalna, eliminacja anomalii i redundancji.
-- [x] Zaimplementowane 2 widoki złączeniowe, funkcja, wyzwalacz i jawna izolowana transakcja.
+- [x] Zrealizowane filary programowania obiektowego, zasady SOLID oraz bezwzględny brak programowania strukturalnego.
+- [x] Aplikacja estetyczna i w 100% responsywna (udokumentowane CSS Media Queries).
+- [x] Działające logowanie, utrzymanie sesji, wylogowanie i panel rejestracji oparty o walidację danych Security Bingo.
+- [x] Autoryzacja i zróżnicowanie uprawnień użytkowników (Admin / User) z dedykowanym panelem zarządzania.
+- [x] Zaawansowana relacyjna baza danych PostgreSQL (relacje 1:1, 1:N, N:M) wyeksportowana do kompletnego pliku SQL wraz z danymi.
+- [x] Spełniona 3 Postać Normalna, eliminacja anomalii, redundancji oraz dopasowane typy danych.
+- [x] Zaimplementowane 2 widoki złączeniowe, funkcja, wyzwalacz i jawna transakcja na odpowiednim poziomie izolacji.
 - [x] Globalna i estetyczna obsługa błędów HTTP 400, 403, 404, 500.
-- [x] Testy jednostkowe obiektu domeny PHPUnit oraz bashowy skrypt weryfikujący stabilność usług.
-- [x] Systematyczne wersjonowanie projektu na publicznym repozytorium powyżej 40 commitów.
-- [x] Dokumentacja techniczna z załączonym diagramem ERD bazy danych.
+- [x] Testy jednostkowe obiektu domeny (PHPUnit) oraz bashowy skrypt integracyjny weryfikujący stabilność endpointów.
+- [x] Systematyczne wersjonowanie projektu na publicznym repozytorium (powyżej 40 commitów).
+- [x] Kompletna dokumentacja techniczna: diagram ERD z linkiem do źródła (.drawio), screeny (Web/Mobile), architektura w
