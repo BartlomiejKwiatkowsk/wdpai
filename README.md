@@ -208,7 +208,7 @@ bash test_endpoint.sh
 Alternatywnie:
 
 ```bash
-curl -I http://localhost:8080/login
+curl.exe -I http://localhost:8080/login
 ```
 ## 5. Scenariusze Testowe
 
